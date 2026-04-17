@@ -16,9 +16,6 @@ MonoBehaviour:
   displayName: Large Corridor
   prefabVariants:
   - {fileID: 8172794952881456467, guid: ebe6a46a6a5a5f14e9b0bfa4b56d7244, type: 3}
-  - {fileID: 3443989558718190643, guid: 304d242941277034cbe9723ef9eba650, type: 3}
-  - {fileID: 2170450621181010666, guid: 195a753e685e5394c845514d5ac39d34, type: 3}
-  - {fileID: 8178615798473927073, guid: d720662e877a9e048a9044e1dfe3d53e, type: 3}
   category: 1
   icon: {fileID: 21300000, guid: 305dc6cfec4eb5d42a46d838170da126, type: 3}
   placementOffset: {x: 0, y: 0, z: 0}

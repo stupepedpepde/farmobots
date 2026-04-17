@@ -16,9 +16,6 @@ MonoBehaviour:
   displayName: XXL Corridor
   prefabVariants:
   - {fileID: 2674035171364151285, guid: 4ea6f9ff324492c41a00e886bd85b844, type: 3}
-  - {fileID: 3658448610263347075, guid: 896eed56f8067aa4f9cd6b6441a0d021, type: 3}
-  - {fileID: 8181359891511480452, guid: 5b88cb4d6bd59e842b132a0d75bb27e8, type: 3}
-  - {fileID: 1932660611342876894, guid: 31c6b6c00a66c754f97a0022dd07bf5d, type: 3}
   category: 1
   icon: {fileID: 21300000, guid: 9e94c601931b97c41a54a1d0e181b161, type: 3}
   placementOffset: {x: 0, y: 0, z: 0}

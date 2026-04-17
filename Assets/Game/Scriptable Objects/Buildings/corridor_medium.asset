@@ -16,9 +16,6 @@ MonoBehaviour:
   displayName: Medium Corridor
   prefabVariants:
   - {fileID: 6744597775672341328, guid: 10b80aad3160c4f4cb3120ea99de28e9, type: 3}
-  - {fileID: 5699740721410047011, guid: ba42a18cb74326a41894eba13c208297, type: 3}
-  - {fileID: 2170450621181010666, guid: 195a753e685e5394c845514d5ac39d34, type: 3}
-  - {fileID: 8178615798473927073, guid: d720662e877a9e048a9044e1dfe3d53e, type: 3}
   category: 1
   icon: {fileID: 21300000, guid: f692143c85f6ac8428ec32f0094a17d0, type: 3}
   placementOffset: {x: 0, y: 0, z: 0}

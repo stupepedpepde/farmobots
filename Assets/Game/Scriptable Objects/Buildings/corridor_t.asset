@@ -16,8 +16,6 @@ MonoBehaviour:
   displayName: T Corridor Intersection
   prefabVariants:
   - {fileID: 7646125009354171834, guid: 1774bb926e759d342ba0af3343b9fb79, type: 3}
-  - {fileID: 940294218403278255, guid: a663424e2d0695b4d85043e9e22821fe, type: 3}
-  - {fileID: 3644042244876778342, guid: be579597ef5d36947b5bc2374f552387, type: 3}
   category: 1
   icon: {fileID: 21300000, guid: dd97bb599c17c5e4e9b4af5b4a4a62ff, type: 3}
   placementOffset: {x: 0, y: 0, z: 0}

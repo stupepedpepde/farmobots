@@ -18,7 +18,7 @@ namespace Game.Scripts.Core.Building {
 
     public class PlacedObjectData {
         public GameObject obj;
-        public BuildablePrefab prefab;          // Now a ScriptableObject
+        public BuildablePrefab prefab;
         public Vector3[] worldConnectionPoints;
         public Quaternion rotation;
         public Vector3 position;
@@ -49,25 +49,20 @@ namespace Game.Scripts.Core.Building {
         public static BuildingSystem instance { get; private set; }
 
         [Header("Building Settings")]
-        [SerializeField] private Material ghostMaterial;
         [SerializeField] private Color ghostValidColor = new(0, 1, 0, 0.4f);
         [SerializeField] private Color ghostInvalidColor = new(1, 0, 0, 0.4f);
         [SerializeField] private LayerMask buildableLayerMask = ~0;
         [SerializeField] private LayerMask obstacleLayerMask = ~0;
-        [SerializeField] private float maxPlaceDistance = 20f;
-
+        [SerializeField] private float maxPlaceDistance = 10.0f;
+        [Space]
         [Header("Grid Settings")]
         [SerializeField] private float[] gridSizes = { 0.25f, 0.5f, 1f, 2f };
         [Range(0, 3)] [SerializeField] private int gridIndex = 2;
-
+        [Space]
         [Header("Snapping")]
         [SerializeField] private float connectionSnapDistance = 0.3f;
         [SerializeField] private bool debugDrawConnectionPoints = true;
-
-        [Header("Ghost Visuals")]
-        [SerializeField] private bool forceUnlitGhost = true;
-        [SerializeField] private string unlitShaderName = "Unlit/Transparent";
-
+        [Space]
         [Header("Buildable Prefabs")]
         [SerializeField] private List<BuildablePrefab> buildablePrefabs = new();
         [SerializeField] private int defaultPrefabIndex;
@@ -305,6 +300,12 @@ namespace Game.Scripts.Core.Building {
                 return false;
             }
 
+            float terrainHeight = TerrainManager.instance.GetHeightAt(pos);
+            float buildingBottom = pos.y - bounds.extents.y;
+            if (buildingBottom > terrainHeight + 0.1f)
+                if (_snappedToObject == null)
+                    return false;
+
             return true;
         }
 
@@ -449,38 +450,29 @@ namespace Game.Scripts.Core.Building {
                 _ghostRenderers = _ghostObject.GetComponentsInChildren<MeshRenderer>();
             }
 
-            Material baseMat = ghostMaterial;
-            if (baseMat == null) {
-                Shader fallbackShader = Shader.Find("Unlit/Transparent");
-                if (fallbackShader != null)
-                    baseMat = new Material(fallbackShader);
-                else
-                    baseMat = new Material(Shader.Find("Standard"));
+            // Use URP Unlit shader for ghost material (supports transparency and _BaseColor)
+            Shader urpUnlitShader = Shader.Find("Universal Render Pipeline/Unlit");
+            if (urpUnlitShader == null) {
+                Debug.LogError("URP Unlit shader not found. Falling back to Unlit/Color.");
+                urpUnlitShader = Shader.Find("Unlit/Color");
             }
 
+            Material baseMat = new Material(urpUnlitShader);
+            // Set up transparency
+            baseMat.SetFloat("_Surface", 1); // 0 = Opaque, 1 = Transparent (URP lit uses _Surface, unlit may not)
+            baseMat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+            baseMat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+            baseMat.SetInt("_ZWrite", 0);
+            baseMat.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
+            baseMat.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
+
             foreach (var r in _ghostRenderers) {
-                r.material = new Material(baseMat);
+                Material instanceMat = new Material(baseMat);
+                r.material = instanceMat;
                 r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
                 r.receiveShadows = false;
                 r.lightProbeUsage = UnityEngine.Rendering.LightProbeUsage.Off;
                 r.reflectionProbeUsage = UnityEngine.Rendering.ReflectionProbeUsage.Off;
-
-                if (forceUnlitGhost) {
-                    Shader unlitShader = Shader.Find(unlitShaderName);
-                    if (unlitShader != null)
-                        r.material.shader = unlitShader;
-                    else
-                        Debug.LogWarning($"Unlit shader '{unlitShaderName}' not found.");
-                }
-
-                r.material.SetFloat("_Mode", 3);
-                r.material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
-                r.material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
-                r.material.SetInt("_ZWrite", 0);
-                r.material.DisableKeyword("_ALPHATEST_ON");
-                r.material.EnableKeyword("_ALPHABLEND_ON");
-                r.material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
-                r.material.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
             }
 
             UpdateGhostVisuals(true);
@@ -513,7 +505,7 @@ namespace Game.Scripts.Core.Building {
             if (rayHit)
                 _placable = valid;
             else
-                _placable = valid && (_snappedToObject != null);
+                _placable = valid && (_snappedToObject != null); // still require ground if not snapped
 
             _ghostObject.transform.position = snapped;
             _ghostObject.transform.rotation = Quaternion.Euler(_currentRotation);
@@ -531,14 +523,15 @@ namespace Game.Scripts.Core.Building {
 
         private void UpdateGhostVisuals(bool valid) {
             if (_ghostRenderers == null || _ghostRenderers.Length == 0) return;
-            var color = valid ? ghostValidColor : ghostInvalidColor;
+            Color color = valid ? ghostValidColor : ghostInvalidColor;
             foreach (var r in _ghostRenderers) {
-                if (r.material.HasProperty("_Color"))
-                    r.material.SetColor("_Color", color);
-                else if (r.material.HasProperty("_BaseColor"))
+                if (r.material != null) {
+                    // URP Unlit uses _BaseColor
                     r.material.SetColor("_BaseColor", color);
-                else
-                    Debug.LogWarning("Ghost material has no recognized color property (_Color or _BaseColor)");
+                    // Fallback for non-URP shaders
+                    if (!r.material.HasProperty("_BaseColor"))
+                        r.material.SetColor("_Color", color);
+                }
             }
         }
 

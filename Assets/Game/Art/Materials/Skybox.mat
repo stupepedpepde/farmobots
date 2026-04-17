@@ -145,7 +145,7 @@ Material:
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _GroundColor: {r: 0.5754717, g: 0.5754717, b: 0.5754717, a: 1}
     - _HorizonColor: {r: 0.4305358, g: 0.58672017, b: 0.7075472, a: 1}
-    - _MainLightDirection: {r: -0.13374332, g: -0.6378068, b: 0.7584954, a: 0}
+    - _MainLightDirection: {r: -0.17353351, g: 0.03635425, b: 0.9841567, a: 0}
     - _NightGroundColor: {r: 0.01931292, g: 0.040455878, b: 0.13207546, a: 1}
     - _NightHorizonColor: {r: 0.2658598, g: 0.23936456, b: 0.31132078, a: 1}
     - _NightSkyColor: {r: 0.03915985, g: 0.08873341, b: 0.15094337, a: 1}

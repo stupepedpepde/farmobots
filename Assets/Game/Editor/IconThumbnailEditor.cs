@@ -3,12 +3,12 @@ using System.IO;
 using Game.Scripts.Core.Building;
 using UnityEditor;
 using UnityEditor.SceneManagement;
-using UnityEngine;
-using UnityEngine.UIElements;
 using UnityEditor.UIElements;
+using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UIElements;
 
-namespace Game.Tools {
+namespace Game.Editor {
     public class IconThumbnailEditor : EditorWindow {
         [SerializeField] private VisualTreeAsset m_VisualTreeAsset = default;
 

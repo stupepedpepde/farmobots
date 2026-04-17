@@ -15,5 +15,5 @@ MonoBehaviour:
   itemName: test item
   icon: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
   maxStack: 20
-  description: seeds
+  description: version 1
   isSeed: 1

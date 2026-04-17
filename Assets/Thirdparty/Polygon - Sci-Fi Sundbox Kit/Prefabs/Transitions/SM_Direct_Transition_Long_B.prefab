@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 3339353696323487055}
   - component: {fileID: 1871280742683691754}
   - component: {fileID: 4475707912930475552}
+  - component: {fileID: -8342014050816937129}
   m_Layer: 0
   m_Name: SM_Direct_Transition_Long_B
   m_TagString: Untagged
@@ -93,6 +94,28 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &-8342014050816937129
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2674035171364151285}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -1492817848090499382, guid: ffdac94fe73ba1249af4d40785e7920a, type: 3}
 --- !u!1 &5226618932012294329
 GameObject:
   m_ObjectHideFlags: 0

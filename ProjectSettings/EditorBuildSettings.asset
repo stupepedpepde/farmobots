@@ -9,8 +9,26 @@ EditorBuildSettings:
     path: Assets/Game/Scenes/Bootstrap.unity
     guid: 52bde34b86552324d8448c5ee0baf33b
   - enabled: 1
-    path: Assets/Game/Scenes/DemoScene.unity
-    guid: 99c9720ab356a0642a771bea13969a05
+    path: Assets/Game/Scenes/RobotScene.unity
+    guid: d9dcacc2f38b6c74da7e93de0c105e02
+  - enabled: 1
+    path: Assets/Game/Scenes/TerrainScene.unity
+    guid: 4c791f33f1d8c944c87c15e92b0be8f4
+  - enabled: 1
+    path: Assets/Game/Scenes/WorldScene.unity
+    guid: 856c8e62c6f3155468df94e7acdd62d7
+  - enabled: 1
+    path: Assets/Game/Scenes/PlayerScene.unity
+    guid: 1bbc38e88c45330488d4dd49e7ce176f
+  - enabled: 1
+    path: Assets/Game/Scenes/Menus/MainMenuScene.unity
+    guid: bfe7b8696fb65424ebfc73d24d1dc698
+  - enabled: 1
+    path: Assets/Game/Scenes/Menus/PauseMenuScene.unity
+    guid: dec7bdf58321af44db663b614804dcf6
+  - enabled: 1
+    path: Assets/Game/Scenes/UI/HUDScene.unity
+    guid: 58b45e25a20132d4b8f59285893535d1
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0

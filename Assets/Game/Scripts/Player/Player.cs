@@ -70,7 +70,7 @@ namespace Game.Scripts.Player {
         private void HandleTerrainModified(Bounds bounds, float height) {
             Vector3 pos = GetPlayerPosition();
             Bounds expandedBounds = bounds;
-            expandedBounds.Expand(5.0f);
+            expandedBounds.Expand(10.0f);
 
             if (!expandedBounds.Contains(pos) || !TerrainManager.instance) return;
 

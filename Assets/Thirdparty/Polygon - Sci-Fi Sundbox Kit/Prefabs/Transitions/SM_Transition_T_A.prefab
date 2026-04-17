@@ -100,6 +100,7 @@ GameObject:
   - component: {fileID: 7014266826485497600}
   - component: {fileID: 6266887622031208613}
   - component: {fileID: 8150532771583263855}
+  - component: {fileID: 4109056960603317370}
   m_Layer: 0
   m_Name: SM_Transition_T_A
   m_TagString: Untagged
@@ -181,6 +182,28 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &4109056960603317370
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7646125009354171834}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -4731067314590918552, guid: f4168b63d4eb1df419381c072974a62e, type: 3}
 --- !u!1 &7673798532779349569
 GameObject:
   m_ObjectHideFlags: 0

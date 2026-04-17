@@ -279,6 +279,7 @@ GameObject:
   - component: {fileID: 8800114047063859177}
   - component: {fileID: 5588846794867314764}
   - component: {fileID: 7668334688959030406}
+  - component: {fileID: -6422452328447885056}
   m_Layer: 0
   m_Name: SM_Direct_Transition_Long_A
   m_TagString: Untagged
@@ -361,3 +362,25 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &-6422452328447885056
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8172794952881456467}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 567256895551997217, guid: 389a896e4062d404da6d4c127163c821, type: 3}
