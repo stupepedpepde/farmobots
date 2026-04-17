@@ -1,0 +1,18 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <Style src="project://database/Assets/Game/Tools/IconThumbnailEditor.uss?fileID=7433441132597879392&amp;guid=6f7ab1924f36c0545be3108260f5efc7&amp;type=3#IconThumbnailEditor" />
+    <ui:VisualElement name="container" style="flex-direction: row;">
+        <ui:ListView name="list" header-title="Elements" show-border="true" allow-add="false" allow-remove="false" show-bound-collection-size="false" show-foldout-header="true" style="width: 40%; height: 800px; background-color: rgb(53, 53, 53); padding-left: 10px;" />
+        <ui:VisualElement name="content" data-source-type="Game.Tools.IconThumbnailEditor, Assembly-CSharp" style="width: 60%; background-size: 100% 100%; height: 800px; background-color: rgb(61, 61, 61); padding-left: 10px;">
+            <ui:Button text="Save Asset Changes" name="save-asset-btn" style="margin-top: 5px;" />
+            <ui:Button text="Capture &amp; Assign Icon" name="capture-icon-btn" style="margin-top: 5px;" />
+            <ui:ScrollView name="inspector" style="margin-top: 10px; height: auto;" />
+            <ui:VisualElement name="output" data-source-type="Game.Scripts.Core.Building.BuildablePrefab, Assembly-CSharp" data-source-path="icon" style="flex-direction: column; height: 256px; width: 256px; align-items: stretch; justify-content: flex-start; align-self: center; top: auto; margin-right: 10px;" />
+            <ui:Vector3Field label="Camera Pos" name="cameraPosition" />
+            <ui:Vector3Field label="Camera Rot" name="cameraRotation" />
+            <ui:VisualElement name="objectRotationContainer" style="flex-direction: row; margin-right: 12px;">
+                <ui:Slider label="Object Rot" value="45" high-value="359" name="objectRotation" style="width: 80%;" />
+                <ui:FloatField value="45" max-length="359" name="objectRotationFloat" style="width: 20%; flex-direction: column; align-items: stretch; justify-content: space-between; margin-right: 0;" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

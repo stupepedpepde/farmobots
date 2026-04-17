@@ -1,0 +1,14 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/Game/Art/UI/UI%20Toolkit/PauseMenu/PauseMenu.uss?fileID=7433441132597879392&amp;guid=af61427a861795146a8d496ee9164f69&amp;type=3#PauseMenu" />
+    <ui:VisualElement name="VisualElement" style="flex-grow: 1; background-color: rgba(50, 50, 50, 0.88); width: auto; height: auto;">
+        <ui:VisualElement enabled="true" name="panel" style="flex-grow: 1; background-size: 100% 100%; background-color: rgba(50, 50, 50, 0); width: 40%; right: 5%; position: relative; left: auto; opacity: 1; align-self: flex-end; -unity-background-image-tint-color: rgb(255, 255, 255);">
+            <ui:Label text="Paused" name="title" style="-unity-text-align: middle-right; -unity-font-style: bold; font-size: 90px; color: rgb(255, 255, 255); padding-top: 4px; margin-top: 24px; white-space: nowrap; right: 5%;" />
+            <ui:VisualElement name="button-container" style="flex-grow: 1; flex-direction: column-reverse; bottom: auto; align-items: flex-end; justify-content: center; align-self: flex-end; height: auto; visibility: visible; padding-bottom: 60%; right: 5%;">
+                <ui:Button text="QUIT" name="quit-button" class="menu-button" />
+                <ui:Button text="MAIN MENU" name="menu-button" class="menu-button" />
+                <ui:Button text="OPTIONS" name="options-button" class="menu-button" />
+                <ui:Button text="RESUME" name="resume-button" class="menu-button" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

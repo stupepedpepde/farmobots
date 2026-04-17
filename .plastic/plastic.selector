@@ -1,0 +1,4 @@
+repository "farm game/Farmobots@6872509022632@cloud"
+  path "/"
+    br "/main"
+    co "/main"

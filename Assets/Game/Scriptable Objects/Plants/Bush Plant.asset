@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37d016c84e804977a75de166b6b0932d, type: 3}
+  m_Name: Bush Plant
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Scripts.Plants.PlantSO
+  plantName: Bush
+  plantPrefabs:
+  - {fileID: 3345686907642768431, guid: 7aae182915c43d1448313bd7e7413932, type: 3}
+  - {fileID: 6490491346398155316, guid: b1a5f6a42b3361645beb9457d27f8024, type: 3}
+  - {fileID: 3443626255250016760, guid: df8e5e284fd16154f8312093c6310f81, type: 3}
+  growthTime: 10
+  oxygenProduction: 0.01
+  plantingTime: 10
+  harvestTime: 8
+  plantSize: 1
+  footprintOffset: {x: 0, y: 0}
+  harvestDrops:
+  - itemDetails: {fileID: 11400000, guid: d8a88e0013b2d4f40972824bb80fa664, type: 2}
+    minQuantity: 1
+    maxQuantity: 3

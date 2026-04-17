@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b121d26c28f4e9e80912b5db5dfa46c, type: 3}
+  m_Name: shelf_large
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Scripts.Core.Building.BuildablePrefab
+  id: shelf_large
+  displayName: Large Shelf
+  prefabVariants:
+  - {fileID: 139709310310601282, guid: ef64e961b9942d046a8ef94b0decd4a7, type: 3}
+  category: 3
+  icon: {fileID: 21300000, guid: b83215b12e9db3a428b01d72f2f0849d, type: 3}
+  placementOffset: {x: 0, y: 0, z: 0}
+  placementRotation: {x: 0, y: 0, z: 0}
+  connectionPointsLocal: []
+  requirements: []
+  bounds:
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 0, y: 0, z: 0}

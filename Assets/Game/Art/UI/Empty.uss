@@ -1,0 +1,99 @@
+.container {
+    width: auto;
+    height: auto;
+    max-width: none;
+    max-height: none;
+
+    flex-grow: 1;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    color: rgba(255, 197, 0, 255);
+    text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
+}
+
+.inventory {
+    padding: 10px;
+
+    width: auto;
+    height: auto;
+    max-width: 576px;
+    max-height: 500px;
+
+    background-color: rgba(32, 32, 32, 255);
+
+    border-width: 4px;
+    border-color: rgba(16, 16, 16, 255);
+}
+
+.inventory-header {
+    position: absolute;
+
+    top: -32px;
+    left: -27px;
+
+    width: 50%;
+    height: 25%;
+
+    justify-content: center;
+    align-items: center;
+
+    background-color: rgba(32, 32, 32, 255);
+
+    border-width: 4px;
+    border-color: rgba(16, 16, 16, 255);
+
+    -unity-slice-scale: 0.5;
+}
+
+Label {
+    font-size: 24px;
+}
+
+.slots-container {
+    padding-top: 30px;
+
+    flex-grow: 1;
+    flex-shrink: 0;
+
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+.slot {
+    width: 60px;
+    height: 60px;
+    margin: 4px;
+
+    background-color: rgba(16, 16, 16, 255);
+
+    border-radius: 4px;
+}
+
+.slotIcon {
+    flex-grow: 1;
+    flex-shrink: 0;
+}
+
+.stack-count {
+    position: absolute;
+
+    bottom: 0;
+    right: 0;
+
+    color: white;
+    font-size: 18px;
+}
+
+.ghost-icon {
+    visibility: hidden;
+    position: absolute;
+
+    width: 60px;
+    height: 60px;
+
+    background-color: rgba(255, 255, 255, 0);
+}

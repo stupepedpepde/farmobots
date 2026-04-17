@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b121d26c28f4e9e80912b5db5dfa46c, type: 3}
+  m_Name: corridor_t
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Scripts.Core.Building.BuildablePrefab
+  id: corridor_t
+  displayName: T Corridor Intersection
+  prefabVariants:
+  - {fileID: 7646125009354171834, guid: 1774bb926e759d342ba0af3343b9fb79, type: 3}
+  - {fileID: 940294218403278255, guid: a663424e2d0695b4d85043e9e22821fe, type: 3}
+  - {fileID: 3644042244876778342, guid: be579597ef5d36947b5bc2374f552387, type: 3}
+  category: 1
+  icon: {fileID: 21300000, guid: dd97bb599c17c5e4e9b4af5b4a4a62ff, type: 3}
+  placementOffset: {x: 0, y: 0, z: 0}
+  placementRotation: {x: 0, y: 0, z: 0}
+  connectionPointsLocal:
+  - {x: 2, y: 0, z: 0}
+  - {x: 0, y: 0, z: 2}
+  - {x: 0, y: 0, z: -2}
+  requirements: []
+  bounds:
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 0, y: 0, z: 0}
