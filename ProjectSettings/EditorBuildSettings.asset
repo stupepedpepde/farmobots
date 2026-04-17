@@ -9,6 +9,9 @@ EditorBuildSettings:
     path: Assets/Game/Scenes/Bootstrap.unity
     guid: 52bde34b86552324d8448c5ee0baf33b
   - enabled: 1
+    path: Assets/Game/Scenes/PlayerScene.unity
+    guid: 1bbc38e88c45330488d4dd49e7ce176f
+  - enabled: 1
     path: Assets/Game/Scenes/RobotScene.unity
     guid: d9dcacc2f38b6c74da7e93de0c105e02
   - enabled: 1
@@ -17,9 +20,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Game/Scenes/WorldScene.unity
     guid: 856c8e62c6f3155468df94e7acdd62d7
-  - enabled: 1
-    path: Assets/Game/Scenes/PlayerScene.unity
-    guid: 1bbc38e88c45330488d4dd49e7ce176f
   - enabled: 1
     path: Assets/Game/Scenes/Menus/MainMenuScene.unity
     guid: bfe7b8696fb65424ebfc73d24d1dc698

@@ -66,6 +66,9 @@ namespace Game.Scripts.Core.Building {
         [Header("Buildable Prefabs")]
         [SerializeField] private List<BuildablePrefab> buildablePrefabs = new();
         [SerializeField] private int defaultPrefabIndex;
+        [Space]
+        [Header("Ghost Material")]
+        [SerializeField] private Material ghostMaterialTemplate;
 
         private bool _buildMode;
         private GameObject _ghostObject;
@@ -450,24 +453,13 @@ namespace Game.Scripts.Core.Building {
                 _ghostRenderers = _ghostObject.GetComponentsInChildren<MeshRenderer>();
             }
 
-            // Use URP Unlit shader for ghost material (supports transparency and _BaseColor)
-            Shader urpUnlitShader = Shader.Find("Universal Render Pipeline/Unlit");
-            if (urpUnlitShader == null) {
-                Debug.LogError("URP Unlit shader not found. Falling back to Unlit/Color.");
-                urpUnlitShader = Shader.Find("Unlit/Color");
+            if (ghostMaterialTemplate == null) {
+                Debug.LogError("Ghost Material Template is not assigned in BuildingSystem inspector! Ghost will not render correctly.");
+                return;
             }
 
-            Material baseMat = new Material(urpUnlitShader);
-            // Set up transparency
-            baseMat.SetFloat("_Surface", 1); // 0 = Opaque, 1 = Transparent (URP lit uses _Surface, unlit may not)
-            baseMat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
-            baseMat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
-            baseMat.SetInt("_ZWrite", 0);
-            baseMat.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
-            baseMat.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
-
             foreach (var r in _ghostRenderers) {
-                Material instanceMat = new Material(baseMat);
+                Material instanceMat = new Material(ghostMaterialTemplate);
                 r.material = instanceMat;
                 r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
                 r.receiveShadows = false;

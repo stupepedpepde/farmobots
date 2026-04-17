@@ -46,9 +46,9 @@ namespace Game.Art.UI.Menu.PauseMenu {
         private async void OnMenuButtonClicked() {
             Debug.Log("main-button clicked");
 
-            menuButton.SetEnabled(false);
-            GameEvents.RequestSceneGroup("main-menu");
-            gameObject.SetActive(false);
+            // menuButton.SetEnabled(false);
+            // GameEvents.RequestSceneGroup("main-menu");
+            // gameObject.SetActive(false);
         }
 
         private void OnQuitButtonClicked() {
