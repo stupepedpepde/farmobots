@@ -193,9 +193,8 @@ namespace Game.Scripts.Robot
 
             switch (robot.Type) {
                 case RobotType.PLANTER:
-                    var selectedPlant = PlantingSystem.instance?.SelectedPlant;
-                    if (selectedPlant == null) return null;
-                    return FindNearestEmptySpot(position, maxDistance, selectedPlant.plantSize);
+                    int plantSize = 1;
+                    return FindNearestEmptySpot(position, maxDistance, plantSize);
                 case RobotType.HARVESTER:
                     return FindNearestHarvestableSpot(position, maxDistance);
                 case RobotType.GARDENER:

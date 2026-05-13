@@ -226,9 +226,6 @@ namespace Game.Scripts.Robot {
 
             robot.SetHomePosition(position);
 
-            if (selectedPlant != null)
-                robot.SelectedPlant = selectedPlant;
-
             return robot;
         }
 

@@ -2,7 +2,7 @@
     <Style src="project://database/Assets/Game/Tools/IconThumbnailEditor.uss?fileID=7433441132597879392&amp;guid=6f7ab1924f36c0545be3108260f5efc7&amp;type=3#IconThumbnailEditor" />
     <ui:VisualElement name="container" style="flex-direction: row;">
         <ui:ListView name="list" header-title="Elements" show-border="true" allow-add="false" allow-remove="false" show-bound-collection-size="false" show-foldout-header="true" style="width: 40%; height: 800px; background-color: rgb(53, 53, 53); padding-left: 10px;" />
-        <ui:VisualElement name="content" data-source-type="Game.Tools.IconThumbnailEditor, Assembly-CSharp" style="width: 60%; background-size: 100% 100%; height: 800px; background-color: rgb(61, 61, 61); padding-left: 10px;">
+        <ui:VisualElement name="content" data-source-type="Game.Editor.IconThumbnailEditor, Assembly-CSharp" style="...">
             <ui:Button text="Save Asset Changes" name="save-asset-btn" style="margin-top: 5px;" />
             <ui:Button text="Capture &amp; Assign Icon" name="capture-icon-btn" style="margin-top: 5px;" />
             <ui:ScrollView name="inspector" style="margin-top: 10px; height: auto;" />

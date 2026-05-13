@@ -200,6 +200,8 @@ namespace Game.Scripts.Core.UI {
             return this;
         }
 
+
+        public UIBuilder WithBorderRadius(float all) =>  WithBorderRadius(all, all, all, all);
         public UIBuilder WithBorderRadius(float topLeft, float topRight, float bottomLeft, float bottomRight) {
             element.style.borderTopLeftRadius = topLeft;
             element.style.borderTopRightRadius = topRight;

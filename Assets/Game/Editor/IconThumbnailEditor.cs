@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
 using Game.Scripts.Core.Building;
+using Game.Scripts.Inventory.Items;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEditor.UIElements;
@@ -12,10 +13,16 @@ namespace Game.Editor {
     public class IconThumbnailEditor : EditorWindow {
         [SerializeField] private VisualTreeAsset m_VisualTreeAsset = default;
 
+        // Buildings
         private List<BuildablePrefab> m_buildings = new List<BuildablePrefab>();
-        private BuildablePrefab m_selectedAsset;
+        private BuildablePrefab m_selectedBuilding;
         private SerializedObject m_serializedAsset;
 
+        // Items
+        private List<ItemDetails> m_items = new List<ItemDetails>();
+        private ItemDetails m_selectedItem;
+
+        // UI
         private ListView m_list;
         private VisualElement m_inspectorContainer;
         private Button m_saveAssetButton;
@@ -25,6 +32,13 @@ namespace Game.Editor {
         private Slider m_objectRotationField;
         private FloatField m_objectRotationFloatField;
 
+        // Mode selector
+        private ToolbarToggle m_buildingsToggle;
+        private ToolbarToggle m_itemsToggle;
+        private enum AssetMode { Buildings, Items }
+        private AssetMode m_currentMode = AssetMode.Buildings;
+
+        // Preview scene
         private Scene m_previewScene;
         private GameObject m_cameraObject;
         private Camera m_sceneCamera;
@@ -33,7 +47,8 @@ namespace Game.Editor {
         private Texture2D m_previewTexture;
         private int m_size = 512;
 
-        private string m_iconOutputFolder = "Assets/Game/Icons/Buildings/";
+        private string m_iconOutputFolderBuildings = "Assets/Game/Icons/Buildings/";
+        private string m_iconOutputFolderItems = "Assets/Game/Icons/Items/";
 
         [MenuItem("Tools/Icon Editor")]
         public static void ShowExample() {
@@ -43,6 +58,22 @@ namespace Game.Editor {
 
         private void CreateGUI() {
             rootVisualElement.Add(m_VisualTreeAsset.Instantiate());
+
+            // Toolbar for mode selection
+            var toolbar = new Toolbar();
+            m_buildingsToggle = new ToolbarToggle() { text = "Buildings", value = true };
+            m_itemsToggle = new ToolbarToggle() { text = "Items", value = false };
+            toolbar.Add(m_buildingsToggle);
+            toolbar.Add(m_itemsToggle);
+            // Insert at top of root (or add to an existing toolbar container)
+            rootVisualElement.Insert(0, toolbar);
+
+            m_buildingsToggle.RegisterValueChangedCallback(evt => {
+                if (evt.newValue) SwitchMode(AssetMode.Buildings);
+            });
+            m_itemsToggle.RegisterValueChangedCallback(evt => {
+                if (evt.newValue) SwitchMode(AssetMode.Items);
+            });
 
             m_list = rootVisualElement.Q<ListView>("list");
             if (m_list == null) return;
@@ -74,7 +105,6 @@ namespace Game.Editor {
                     m_objectRotationFloatField.SetValueWithoutNotify(evt.newValue);
                     OnRotationChange(evt);
                 });
-
                 m_objectRotationFloatField.RegisterValueChangedCallback(evt => {
                     m_objectRotationField.SetValueWithoutNotify(evt.newValue);
                     OnRotationChange(evt);
@@ -85,6 +115,12 @@ namespace Game.Editor {
                 m_objectRotationFloatField?.RegisterValueChangedCallback(OnRotationChange);
             }
 
+            LoadBuildings();
+            LoadItems();
+            SwitchMode(AssetMode.Buildings);
+        }
+
+        private void LoadBuildings() {
             string[] assetGuids = AssetDatabase.FindAssets("t:BuildablePrefab");
             m_buildings.Clear();
             foreach (string guid in assetGuids) {
@@ -92,34 +128,113 @@ namespace Game.Editor {
                 var asset = AssetDatabase.LoadAssetAtPath<BuildablePrefab>(path);
                 if (asset != null) m_buildings.Add(asset);
             }
+        }
 
-            m_list.itemsSource = m_buildings;
-            m_list.makeItem = () => new Label();
-            m_list.bindItem = (element, index) => {
-                var item = m_buildings[index];
-                (element as Label).text = item != null ? $"{item.name} - (BuildablePrefab)" : "<null>";
-            };
+        private void LoadItems() {
+            string[] assetGuids = AssetDatabase.FindAssets("t:ItemDetails");
+            m_items.Clear();
+            foreach (string guid in assetGuids) {
+                string path = AssetDatabase.GUIDToAssetPath(guid);
+                var asset = AssetDatabase.LoadAssetAtPath<ItemDetails>(path);
+                if (asset != null) m_items.Add(asset);
+            }
+        }
 
-            m_list.selectionChanged += OnSelectItem;
-            m_list.RefreshItems();
+        private void SwitchMode(AssetMode mode) {
+            m_currentMode = mode;
+            m_buildingsToggle.value = (mode == AssetMode.Buildings);
+            m_itemsToggle.value = (mode == AssetMode.Items);
+
+            if (mode == AssetMode.Buildings) {
+                m_list.itemsSource = m_buildings;
+                m_list.makeItem = () => new Label();
+                m_list.bindItem = (element, index) => {
+                    var item = m_buildings[index];
+                    (element as Label).text = item != null ? $"{item.name} - (BuildablePrefab)" : "<null>";
+                };
+                m_list.selectionChanged -= OnSelectItem;
+                m_list.selectionChanged += OnSelectItem;
+                m_list.RefreshItems();
+            } else {
+                m_list.itemsSource = m_items;
+                m_list.makeItem = () => new Label();
+                m_list.bindItem = (element, index) => {
+                    var item = m_items[index];
+                    (element as Label).text = item != null ? $"{item.name} - (ItemDetails)" : "<null>";
+                };
+                m_list.selectionChanged -= OnSelectItem;
+                m_list.selectionChanged += OnSelectItem;
+                m_list.RefreshItems();
+            }
         }
 
         private void OnSelectItem(object item) {
-            if (m_list.selectedIndex < 0 || m_list.selectedIndex >= m_buildings.Count)
+            if (m_list.selectedIndex < 0) return;
+
+            if (m_currentMode == AssetMode.Buildings) {
+                m_selectedBuilding = m_buildings[m_list.selectedIndex];
+                if (m_selectedBuilding == null) return;
+                m_serializedAsset = new SerializedObject(m_selectedBuilding);
+                BuildInspector();
+                LoadPreviewForBuilding(m_selectedBuilding);
+            } else {
+                m_selectedItem = m_items[m_list.selectedIndex];
+                if (m_selectedItem == null) return;
+                m_serializedAsset = new SerializedObject(m_selectedItem);
+                BuildInspector();
+                LoadPreviewForItem(m_selectedItem);
+            }
+        }
+
+        private void LoadPreviewForBuilding(BuildablePrefab building) {
+            if (!m_previewScene.IsValid())
+                m_previewScene = EditorSceneManager.NewPreviewScene();
+
+            EnsureCamera();
+
+            GameObject prefabToShow = building.prefabVariants != null && building.prefabVariants.Length > 0 ? building.prefabVariants[0] : null;
+            if (prefabToShow == null) {
+                Debug.LogWarning($"No prefab variant for {building.name}");
                 return;
+            }
 
-            m_selectedAsset = m_buildings[m_list.selectedIndex];
-            if (m_selectedAsset == null) return;
+            ClearInstance();
+            m_instance = (GameObject)PrefabUtility.InstantiatePrefab(prefabToShow, m_previewScene);
+            m_instance.transform.position = Vector3.zero;
+            m_instance.transform.rotation = Quaternion.Euler(0, m_objectRotationField.value, 0);
 
-            m_serializedAsset = new SerializedObject(m_selectedAsset);
-            BuildInspector();
+            UpdateConnectionPointVisuals();
+            UpdateCamera();
+        }
+
+        private void LoadPreviewForItem(ItemDetails item) {
+            if (item.PreviewPrefab == null) {
+                Debug.LogWarning($"Item {item.name} has no PreviewPrefab assigned. Cannot render icon.");
+                return;
+            }
 
             if (!m_previewScene.IsValid())
                 m_previewScene = EditorSceneManager.NewPreviewScene();
 
+            EnsureCamera();
+
+            ClearInstance();
+            m_instance = (GameObject)PrefabUtility.InstantiatePrefab(item.PreviewPrefab, m_previewScene);
+            m_instance.transform.position = Vector3.zero;
+            m_instance.transform.rotation = Quaternion.Euler(0, m_objectRotationField.value, 0);
+
+            // Clear any connection point helpers (not used for items)
+            foreach (var helper in m_connectionPointHelpers)
+                if (helper != null) DestroyImmediate(helper);
+            m_connectionPointHelpers.Clear();
+
+            UpdateCamera();
+        }
+
+        private void EnsureCamera() {
             if (m_cameraObject == null) {
                 m_cameraObject = new GameObject("PreviewCamera");
-                m_cameraObject.transform.position = new Vector3(0, 4, -10);
+                m_cameraObject.transform.position = new Vector3(0, 2, -5);
                 m_cameraObject.transform.eulerAngles = Vector3.zero;
                 m_cameraPositionField.value = m_cameraObject.transform.position;
                 m_cameraRotationField.value = m_cameraObject.transform.eulerAngles;
@@ -133,22 +248,11 @@ namespace Game.Editor {
                 SceneManager.MoveGameObjectToScene(m_cameraObject, m_previewScene);
                 m_sceneCamera.scene = m_previewScene;
             }
+        }
 
-            GameObject prefabToShow = m_selectedAsset.prefabVariants != null && m_selectedAsset.prefabVariants.Length > 0 ? m_selectedAsset.prefabVariants[0] : null;
-            if (prefabToShow == null) {
-                Debug.LogWarning($"No prefab variant for {m_selectedAsset.name}");
-                return;
-            }
-
+        private void ClearInstance() {
             if (m_instance != null)
                 DestroyImmediate(m_instance);
-
-            m_instance = (GameObject)PrefabUtility.InstantiatePrefab(prefabToShow, m_previewScene);
-            m_instance.transform.position = Vector3.zero;
-            m_instance.transform.rotation = Quaternion.Euler(0, m_objectRotationField.value, 0);
-
-            UpdateConnectionPointVisuals();
-            UpdateCamera();
         }
 
         private void BuildInspector() {
@@ -163,21 +267,25 @@ namespace Game.Editor {
                 m_inspectorContainer.Add(field);
             }
 
-            Button refreshPointsBtn = new Button(() => UpdateConnectionPointVisuals());
-            refreshPointsBtn.text = "Refresh Snapping Points Visuals";
-            m_inspectorContainer.Add(refreshPointsBtn);
+            if (m_currentMode == AssetMode.Buildings) {
+                Button refreshPointsBtn = new Button(() => UpdateConnectionPointVisuals());
+                refreshPointsBtn.text = "Refresh Snapping Points Visuals";
+                m_inspectorContainer.Add(refreshPointsBtn);
+            }
         }
 
         private void UpdateConnectionPointVisuals() {
+            if (m_currentMode != AssetMode.Buildings) return;
+
             foreach (var helper in m_connectionPointHelpers)
                 if (helper != null) DestroyImmediate(helper);
 
             m_connectionPointHelpers.Clear();
 
-            if (m_instance == null || m_selectedAsset == null) return;
+            if (m_instance == null || m_selectedBuilding == null) return;
 
-            for (int i = 0; i < m_selectedAsset.connectionPointsLocal.Length; i++) {
-                Vector3 localPos = m_selectedAsset.connectionPointsLocal[i];
+            for (int i = 0; i < m_selectedBuilding.connectionPointsLocal.Length; i++) {
+                Vector3 localPos = m_selectedBuilding.connectionPointsLocal[i];
                 GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
                 sphere.name = $"ConnectionPoint_{i}";
                 sphere.transform.SetParent(m_instance.transform);
@@ -197,29 +305,39 @@ namespace Game.Editor {
 
         private void SaveAssetChanges() {
             if (m_serializedAsset != null && m_serializedAsset.ApplyModifiedProperties()) {
-                EditorUtility.SetDirty(m_selectedAsset);
+                if (m_currentMode == AssetMode.Buildings && m_selectedBuilding != null)
+                    EditorUtility.SetDirty(m_selectedBuilding);
+                else if (m_currentMode == AssetMode.Items && m_selectedItem != null)
+                    EditorUtility.SetDirty(m_selectedItem);
                 AssetDatabase.SaveAssets();
-                Debug.Log($"Saved changes to {m_selectedAsset.name}");
+                Debug.Log($"Saved changes to {(m_currentMode == AssetMode.Buildings ? m_selectedBuilding?.name : m_selectedItem?.name)}");
             } else
                 Debug.Log("No changes to save.");
         }
 
         private void CaptureAndAssignIcon() {
-            if (m_selectedAsset == null) {
-                Debug.LogError("No asset selected.");
+            if (m_currentMode == AssetMode.Buildings && m_selectedBuilding == null) {
+                Debug.LogError("No building selected.");
                 return;
             }
-
+            if (m_currentMode == AssetMode.Items && m_selectedItem == null) {
+                Debug.LogError("No item selected.");
+                return;
+            }
             if (m_sceneCamera == null) {
                 Debug.LogError("Preview camera not initialized.");
                 return;
             }
 
-            bool[] wasActive = new bool[m_connectionPointHelpers.Count];
-            for (int i = 0; i < m_connectionPointHelpers.Count; i++) {
-                if (m_connectionPointHelpers[i] != null) {
-                    wasActive[i] = m_connectionPointHelpers[i].activeSelf;
-                    m_connectionPointHelpers[i].SetActive(false);
+            // Hide connection point helpers if any
+            bool[] wasActive = null;
+            if (m_currentMode == AssetMode.Buildings && m_connectionPointHelpers.Count > 0) {
+                wasActive = new bool[m_connectionPointHelpers.Count];
+                for (int i = 0; i < m_connectionPointHelpers.Count; i++) {
+                    if (m_connectionPointHelpers[i] != null) {
+                        wasActive[i] = m_connectionPointHelpers[i].activeSelf;
+                        m_connectionPointHelpers[i].SetActive(false);
+                    }
                 }
             }
 
@@ -239,14 +357,17 @@ namespace Game.Editor {
 
             m_sceneCamera.backgroundColor = originalBackground;
 
-            for (int i = 0; i < m_connectionPointHelpers.Count; i++)
-                if (m_connectionPointHelpers[i] != null)
-                    m_connectionPointHelpers[i].SetActive(wasActive[i]);
+            if (m_currentMode == AssetMode.Buildings && wasActive != null) {
+                for (int i = 0; i < m_connectionPointHelpers.Count; i++)
+                    if (m_connectionPointHelpers[i] != null)
+                        m_connectionPointHelpers[i].SetActive(wasActive[i]);
+            }
 
-            if (!Directory.Exists(m_iconOutputFolder)) Directory.CreateDirectory(m_iconOutputFolder);
+            string outputFolder = (m_currentMode == AssetMode.Buildings) ? m_iconOutputFolderBuildings : m_iconOutputFolderItems;
+            if (!Directory.Exists(outputFolder)) Directory.CreateDirectory(outputFolder);
 
-            string safeName = m_selectedAsset.id.Replace(" ", "_");
-            string pngPath = Path.Combine(m_iconOutputFolder, $"{safeName}_icon.png").Replace("\\", "/");
+            string assetName = (m_currentMode == AssetMode.Buildings) ? m_selectedBuilding.id.Replace(" ", "_") : m_selectedItem.name.Replace(" ", "_");
+            string pngPath = Path.Combine(outputFolder, $"{assetName}_icon.png").Replace("\\", "/");
 
             if (File.Exists(pngPath)) {
                 AssetDatabase.DeleteAsset(pngPath);
@@ -271,20 +392,26 @@ namespace Game.Editor {
                 importer.sRGBTexture = false;
                 importer.alphaIsTransparency = true;
                 importer.SaveAndReimport();
-            } else
+            } else {
                 Debug.LogWarning($"Could not get TextureImporter for {pngPath}");
+            }
 
             Sprite generatedSprite = AssetDatabase.LoadAssetAtPath<Sprite>(pngPath);
             if (generatedSprite != null) {
-                m_selectedAsset.icon = generatedSprite;
-                EditorUtility.SetDirty(m_selectedAsset);
+                if (m_currentMode == AssetMode.Buildings) {
+                    m_selectedBuilding.icon = generatedSprite;
+                    EditorUtility.SetDirty(m_selectedBuilding);
+                } else {
+                    m_selectedItem.SetIcon(generatedSprite);
+                    EditorUtility.SetDirty(m_selectedItem);
+                }
                 AssetDatabase.SaveAssets();
-                Debug.Log($"Icon captured and assigned to {m_selectedAsset.name} at {pngPath} using: pos{m_cameraPositionField.value} : rot{m_cameraRotationField.value} : obj_rot{m_objectRotationField.value}");
-            } else
+                Debug.Log($"Icon captured and assigned to {(m_currentMode == AssetMode.Buildings ? m_selectedBuilding.name : m_selectedItem.name)} at {pngPath}");
+            } else {
                 Debug.LogError("Failed to load generated sprite.");
+            }
 
             DestroyImmediate(capturedTexture);
-
             BuildInspector();
         }
 
@@ -312,19 +439,16 @@ namespace Game.Editor {
 
         private void OnCameraPositionChange(ChangeEvent<Vector3> evt) {
             if (m_cameraObject != null) m_cameraObject.transform.position = evt.newValue;
-
             UpdateCamera();
         }
 
         private void OnCameraRotationChange(ChangeEvent<Vector3> evt) {
             if (m_cameraObject != null) m_cameraObject.transform.eulerAngles = evt.newValue;
-
             UpdateCamera();
         }
 
         private void OnRotationChange(ChangeEvent<float> evt) {
             if (m_instance != null) m_instance.transform.eulerAngles = new Vector3(0, evt.newValue, 0);
-
             UpdateCamera();
         }
 

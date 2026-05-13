@@ -33,14 +33,14 @@ namespace Game.Scripts.Robot {
         [Header("Inventory")]
         [SerializeField] private RobotInventory inventory;
         [SerializeField] private float interactionRange = 3.0f;
-        [SerializeField] private PlantSO selectedPlant;
+        // [Obsolete] private PlantSO selectedPlant;  // removed – robots use seeds from inventory
         [Space]
         [Header("Robot Stats")]
         [SerializeField] private float moveSpeed = 5.0f;
         [SerializeField] private float workSpeed = 1.0f;
         [SerializeField] private float efficiency = 1.0f;
         [SerializeField] private float workRange = 1.5f;
-        [SerializeField] private float hoverHeight = 0.5f;   // height above terrain
+        [SerializeField] private float hoverHeight = 0.5f;
         [Space]
         [Header("Energy System")]
         [SerializeField] private float maxEnergy = 100f;
@@ -77,7 +77,7 @@ namespace Game.Scripts.Robot {
         public void Initialize() {
             currentEnergy = maxEnergy;
             homePosition = transform.position;
-            SnapToTerrainHeight(); // ensure starting position is correct
+            SnapToTerrainHeight();
 
             if (inventory == null) {
                 inventory = GetComponentInChildren<RobotInventory>();
@@ -168,7 +168,6 @@ namespace Game.Scripts.Robot {
             if (currentTask == null) {
                 state = RobotState.IDLE;
                 FindWork();
-
                 return;
             }
             workTimer -= deltaTime;
@@ -302,10 +301,35 @@ namespace Game.Scripts.Robot {
 
         private bool PerformPlanting() {
             if (currentTargetSpot == null) return false;
+
             InventoryComponent inv = inventory.GetInventoryComponent();
-            if (inv == null || selectedPlant == null) return false;
-            GameEvents.RequestPlanting(inv, currentTargetSpot);
-            return true;
+            if (inv == null) return false;
+
+            // Get the first seed from inventory
+            Item seed = GetFirstSeedFromInventory(inv);
+            if (seed == null) {
+                Debug.LogWarning($"{name} has no seeds to plant.");
+                return false;
+            }
+
+            // Direct planting using the seed
+            bool planted = PlantingSystem.instance.TryPlantWithSeed(inv, currentTargetSpot, seed);
+            if (planted) {
+                Debug.Log($"{name} planted {seed.details.ItemName} at {currentTargetSpot.name}");
+            } else {
+                Debug.LogWarning($"{name} failed to plant {seed.details.ItemName} – spot may be occupied or invalid.");
+            }
+            return planted;
+        }
+
+        private Item GetFirstSeedFromInventory(InventoryComponent inv) {
+            for (int i = 0; i < inv.GetCapacity(); i++) {
+                Item item = inv.GetItem(i);
+                if (item != null && item.details.IsSeed && item.details.PlantsToGrow != null) {
+                    return item;
+                }
+            }
+            return null;
         }
 
         private bool PerformHarvesting() {
@@ -327,7 +351,7 @@ namespace Game.Scripts.Robot {
 
         private bool PerformWatering() {
             if (currentTargetSpot == null || !currentTargetSpot.isOccupied) return false;
-            // watering logic here
+            // watering logic here (future)
             return true;
         }
 
@@ -350,17 +374,17 @@ namespace Game.Scripts.Robot {
             switch (type) {
                 case RobotType.PLANTER:
                     if (!HasSeeds()) return;
-                    if (selectedPlant == null) return;
-
+                    // Find a suitable empty spot (size 1 for now; multi‑tile could be supported later)
                     currentTargetSpot = RobotManager.instance.FindSuitableSpot(this, transform.position);
-
                     if (currentTargetSpot != null) {
+                        // Work duration will be determined from the seed's plant when the task executes.
+                        // Use a default duration; it will be overridden by the plant's plantingTime if needed.
+                        float workDuration = 2f;
                         RobotTask task = new RobotTask {
                             targetSpot = currentTargetSpot,
                             action = RobotAction.PLANT,
-                            workDuration = selectedPlant.plantingTime
+                            workDuration = workDuration
                         };
-
                         AssignImmediateTask(task);
                     }
                     break;
@@ -404,18 +428,16 @@ namespace Game.Scripts.Robot {
         private bool HasSeeds() {
             InventoryComponent inv = inventory.GetInventoryComponent();
             if (inv == null) return false;
-
-            var items = inv.GetAllItems();
-
-            foreach (var item in items)
-                if (item != null && item.details != null && item.details.IsSeed)
+            for (int i = 0; i < inv.GetCapacity(); i++) {
+                Item item = inv.GetItem(i);
+                if (item != null && item.details != null && item.details.IsSeed && item.details.PlantsToGrow != null)
                     return true;
-
+            }
             return false;
         }
 
         public void SetHomePosition(Vector3 pos) => homePosition = pos;
-        public void SetSelectedPlant(PlantSO plant) => selectedPlant = plant;
+        // Removed SetSelectedPlant – robots no longer need a global selected plant
         public void RechargeEnergy(float amount) => currentEnergy = Mathf.Min(maxEnergy, currentEnergy + amount);
         public void DrainEnergy(float amount) => currentEnergy = Mathf.Max(0, currentEnergy - amount);
         public bool HasSufficientEnergy(float requiredPercentage = 0.2f) => EnergyPercentage >= requiredPercentage;
@@ -424,24 +446,24 @@ namespace Game.Scripts.Robot {
         #region Getters & Setters
         public RobotType Type {
             get => type;
-            set =>  type = value;
+            set => type = value;
         }
-        
+
         public RobotInventory Inventory => inventory;
 
         public float InteractionRange {
             get => interactionRange;
             set => interactionRange = Mathf.Max(0.1f, value);
         }
-        
+
         public RobotState CurrentState => state;
-        
+
         public float EnergyPercentage => currentEnergy / maxEnergy;
-        
+
         public bool IsBusy => state != RobotState.IDLE || taskQueue.Count > 0;
-        
+
         public int QueuedTaskCount => taskQueue.Count;
-        
+
         public float MoveSpeed {
             get => moveSpeed;
             set => moveSpeed = Mathf.Max(0.1f, value);
@@ -453,7 +475,7 @@ namespace Game.Scripts.Robot {
         }
 
         public float Efficiency {
-            get => efficiency; 
+            get => efficiency;
             set => efficiency = Mathf.Max(0.1f, value);
         }
 
@@ -466,7 +488,6 @@ namespace Game.Scripts.Robot {
             get => maxEnergy;
             set {
                 maxEnergy = Mathf.Max(10f, value);
-
                 if (currentEnergy > maxEnergy)
                     currentEnergy = maxEnergy;
             }
@@ -480,7 +501,6 @@ namespace Game.Scripts.Robot {
         public float RechargeRate {
             get => rechargeRate;
             set => rechargeRate = Mathf.Max(0.1f, value);
-
         }
 
         public float LowEnergyThreshold {
@@ -493,13 +513,10 @@ namespace Game.Scripts.Robot {
             set => maxQueuedTasks = Mathf.Max(1, value);
         }
 
-        public PlantSO SelectedPlant {
-            get => selectedPlant;
-            set => selectedPlant = value;
-        }
+        // SelectedPlant property is removed because robots use seeds directly.
+        // If you need to keep it for other systems, you can add it back but it won't affect planting.
 
         public float GetInteractionRange() => interactionRange;
-
         public string GetInteractionPrompt() => $"Open {type}";
         #endregion
 

@@ -136,3 +136,4 @@ MonoBehaviour:
   inventoryRows: 5
   availableRecipes:
   - {fileID: 11400000, guid: 2ff62223e5df7a647a42f64dbfdc0c80, type: 2}
+  - {fileID: 11400000, guid: d0ab1c776e1a9014ca2a91aec1fc2813, type: 2}
