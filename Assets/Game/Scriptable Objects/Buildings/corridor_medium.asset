@@ -23,7 +23,11 @@ MonoBehaviour:
   connectionPointsLocal:
   - {x: 0, y: 0, z: 2}
   - {x: 0, y: 0, z: -2}
-  requirements: []
+  requirements:
+  - requiredItem: {fileID: 11400000, guid: cf61004e49163454f934c533f07ab441, type: 2}
+    quantity: 3
+  - requiredItem: {fileID: 11400000, guid: dedd45268cc0e844480c54b207b3a9f7, type: 2}
+    quantity: 2
   bounds:
     m_Center: {x: 0, y: 0, z: 0}
     m_Extent: {x: 0, y: 0, z: 0}

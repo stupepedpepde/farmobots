@@ -24,6 +24,22 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - Texture2D_20CAF406:
+        m_Texture: {fileID: 2800000, guid: 5376d7dc9b169f14cb482caa5f1ce23b, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - Texture2D_3163ABF1:
+        m_Texture: {fileID: 2800000, guid: cb4125038ea98e547b1fe0f7b374ef9c, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - Texture2D_6BA91097:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - Texture2D_C317BDD3:
+        m_Texture: {fileID: 2800000, guid: 8df318f704b990341b488e60823088b9, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _BaseMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -82,13 +98,24 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - Vector1_166C34A9: 0.17
+    - Vector1_249357C1: 0.12
+    - Vector1_2CC6A532: 0.2
+    - Vector1_3B7A233E: 3.5
+    - Vector1_9BA3FBEE: 6.4
+    - Vector1_9E12CF26: 0.1
+    - Vector1_BA803F6: 0.5
+    - Vector1_D80769F7: 1.84
+    - Vector1_ECE38ED2: 0.01
+    - Vector1_FA4E5253: 1
+    - Vector1_FE797C36: 1
     - _AddPrecomputedVelocity: 0
     - _AlphaClip: 0
     - _AlphaToMask: 0
     - _AuroraBlend: 8
     - _AuroraDistortionSpeed: 0.001
     - _AuroraHeight: 0
-    - _AuroraIntensity: 0
+    - _AuroraIntensity: 1.4811746
     - _AuroraNoiseScale: 200
     - _AuroraPower: 1.5
     - _AuroraTwirlStrength: 0.6
@@ -115,10 +142,13 @@ Material:
     - _Metallic: 0
     - _NadirBlend: 0.5
     - _OcclusionStrength: 1
+    - _Offset_Color_Lerp: 0
     - _Parallax: 0.005
     - _QueueControl: 0
     - _QueueOffset: 0
     - _ReceiveShadows: 1
+    - _Secondary_Clouds_Cutoff: 0.5
+    - _Secondary_Clouds_Smoothness: 0.1
     - _SkyBlend: 1
     - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
@@ -126,8 +156,9 @@ Material:
     - _SrcBlend: 1
     - _SrcBlendAlpha: 1
     - _StarHeight: 500
-    - _StarIntensity: 0
+    - _StarIntensity: 16.457495
     - _StarPower: 45
+    - _Stretch_Color_Lerp: 1
     - _SunBlend: 1
     - _SunSize: 0.15
     - _Surface: 0
@@ -136,22 +167,38 @@ Material:
     - _ZWrite: 1
     - _ZenithBlend: 0.5
     m_Colors:
+    - Color_1EB49FED: {r: 0.8679245, g: 0.7247315, b: 0.3111428, a: 0}
+    - Color_424F81E0: {r: 0.9056604, g: 0.883785, b: 0.6237095, a: 0}
+    - Color_68FD0CD8: {r: 0.254717, g: 1, b: 0.9453618, a: 0}
+    - Color_83CF459: {r: 0.1439124, g: 0.2019927, b: 0.4622642, a: 0}
+    - Color_AB9D6D2F: {r: 0.5505777, g: 0.0550018, b: 0.9716981, a: 0}
+    - Color_B54BEABE: {r: 0.764151, g: 0.6776433, b: 0.6776433, a: 0}
+    - Color_BE31CDF2: {r: 0.254902, g: 0.5283097, b: 1, a: 0}
+    - Color_D230EFA1: {r: 0.1711811, g: 0.1388394, b: 0.3773585, a: 0}
+    - Color_E5129607: {r: 0.490566, g: 0.4697732, b: 0.1666073, a: 0}
     - _AuroraDistiortionMinMax: {r: 30, g: 30, b: 0, a: 0}
     - _AuroraScrollSpeed: {r: 0.005, g: 0.005, b: 0, a: 0}
     - _AuroraTiling: {r: 1, g: 0.94, b: 0, a: 0}
     - _AuroraTwirlOffset: {r: 0, g: 0, b: 0, a: 0}
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
+    - _Cloud_Distortion_Speed_Dir: {r: 0.01, g: 0.01, b: 0, a: 0}
+    - _Cloud_Layer_Speed_Dir: {r: 0.01, g: 0.01, b: 0, a: 0}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _GroundColor: {r: 0.5754717, g: 0.5754717, b: 0.5754717, a: 1}
     - _HorizonColor: {r: 0.4305358, g: 0.58672017, b: 0.7075472, a: 1}
-    - _MainLightDirection: {r: -0.07584348, g: -0.89957577, b: 0.4301294, a: 0}
+    - _Horizon_Clouds_Fade: {r: 0.05, g: 1, b: 0, a: 0}
+    - _Horizon_Color_Night: {r: 0.2884178, g: 0, b: 1, a: 0}
+    - _MainLightDirection: {r: -0.11288604, g: 0.75986207, b: 0.6402081, a: 0}
+    - _Moon_Offset: {r: 0, g: 0, b: 0, a: 0}
+    - _Moon_Stars_Col: {r: 1, g: 1, b: 1, a: 0}
     - _NightGroundColor: {r: 0.01931292, g: 0.040455878, b: 0.13207546, a: 1}
     - _NightHorizonColor: {r: 0.2658598, g: 0.23936456, b: 0.31132078, a: 1}
     - _NightSkyColor: {r: 0.03915985, g: 0.08873341, b: 0.15094337, a: 1}
     - _SkyColor: {r: 0.5473478, g: 0.6804733, b: 0.9433962, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
     - _SunColor: {r: 4.237095, g: 2.3184102, b: 0.41971222, a: 1}
+    - _Sun_Color: {r: 1, g: 0.92369086, b: 0.21568626, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
 --- !u!114 &4495353308223518423

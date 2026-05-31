@@ -30,17 +30,13 @@ namespace Game.Scripts.Core.Scene {
 
             GameEvents.OnSceneGroupRequested += HandleLoadRequest;
             GameEvents.OnSceneGroupAddRequested += HandleAddRequest;
-            GameEvents.OnUISceneRequested += HandleUISceneRequest;
 
             GameManager.instance?.Register(this as IUpdatable);
-
-            _ = LoadSceneGroup("main-menu");
         }
 
         private void OnDestroy() {
             GameEvents.OnSceneGroupRequested -= HandleLoadRequest;
             GameEvents.OnSceneGroupAddRequested -= HandleAddRequest;
-            GameEvents.OnUISceneRequested -= HandleUISceneRequest;
 
             GameManager.instance?.Unregister(this as IInitializable);
             GameManager.instance?.Unregister(this as IUpdatable);

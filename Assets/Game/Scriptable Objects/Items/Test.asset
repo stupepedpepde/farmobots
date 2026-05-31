@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1652fed184884bdda9057fe504ec6f95, type: 3}
   m_Name: Test
   m_EditorClassIdentifier: Assembly-CSharp::Game.Scripts.Inventory.Items.ItemDetails
-  itemName: test item
+  itemName: Test
   icon: {fileID: 21300000, guid: 042cc2e513389414b9abeb8eb592e388, type: 3}
   maxStack: 20
   description: version 1

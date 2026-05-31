@@ -20,6 +20,7 @@ namespace Game.Scripts.Player {
         [SerializeField] private KinematicCharacterMotor motor;
         [SerializeField] private Transform root;
         [SerializeField] private Transform cameraTarget;
+        [SerializeField] private Transform particleTarget;
         [SerializeField] private LayerMask collidableLayers;
         [Space]
         [SerializeField] private float walkSpeed = 10.0f;
@@ -225,5 +226,6 @@ namespace Game.Scripts.Player {
         public void OnDiscreteCollisionDetected(Collider hitCollider) { }
 
         public Transform GetCameraTarget() => cameraTarget;
+        public Transform GetParticleTarget() => particleTarget;
     }
 }

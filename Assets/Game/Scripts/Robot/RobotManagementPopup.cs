@@ -1,13 +1,16 @@
 ﻿using System.Collections.Generic;
 using Game.Scripts.Core.Building.Buildings;
+using Game.Scripts.Core.Environment.Terrain.Node;
 using Game.Scripts.Core.UI;
 using Game.Scripts.Inventory;
 using Game.Scripts.Inventory.Items;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace Game.Scripts.Robot {
-    public class RobotManagementPopup {
+namespace Game.Scripts.Robot
+{
+    public class RobotManagementPopup
+    {
         private const string POPUP_ID = "robot-computer";
         private RobotComputer computer;
         private List<RobotRecipe> recipes;
@@ -22,6 +25,7 @@ namespace Game.Scripts.Robot {
 
         private Robot selectedRobot;
         private RobotRecipe selectedRecipe;
+        private List<NodeType> availableNodeTypes = new List<NodeType>();
 
         private static readonly Color PanelBgColor = new Color(0.1f, 0.1f, 0.1f, 0.95f);
         private static readonly Color HeaderColor = new Color(0.2f, 0.15f, 0.1f, 1f);
@@ -32,15 +36,17 @@ namespace Game.Scripts.Robot {
 
         public bool IsOpen => popup != null && popup.root.parent != null;
 
-        public RobotManagementPopup(RobotComputer computer, List<RobotRecipe> recipes, InventoryComponent playerInventory) {
+        public RobotManagementPopup(RobotComputer computer, List<RobotRecipe> recipes, InventoryComponent playerInventory)
+        {
             this.computer = computer;
             this.recipes = recipes;
             this.playerInventory = playerInventory;
         }
 
-        private void BuildUI() {
+        private void BuildUI()
+        {
             popup = UIManager.instance.CreatePopup(POPUP_ID, computer.GetComputerName(), draggable: true, closable: true)
-                .SetSize(900, 650)
+                .SetSize(900, 800)
                 .OnClose(OnPopupClosed);
 
             var mainRow = UIBuilder.CreateContainer()
@@ -59,14 +65,17 @@ namespace Game.Scripts.Robot {
             root = popup.content;
         }
 
-        private void OnPopupClosed() {
-            if (playerInventory != null) {
+        private void OnPopupClosed()
+        {
+            if (playerInventory != null)
+            {
                 playerInventory.OnItemChanged -= OnInventoryChanged;
                 playerInventory.OnItemAdded -= OnInventoryChanged;
                 playerInventory.OnItemRemoved -= OnInventoryChanged;
             }
 
-            if (RobotManager.instance != null) {
+            if (RobotManager.instance != null)
+            {
                 RobotManager.instance.OnRobotRegistered -= OnRobotsChanged;
                 RobotManager.instance.OnRobotUnregistered -= OnRobotsChanged;
                 RobotManager.instance.OnTaskAssigned -= OnRobotTaskChanged;
@@ -74,22 +83,27 @@ namespace Game.Scripts.Robot {
             }
         }
 
-        public void Toggle() {
+        public void Toggle()
+        {
             if (popup == null) BuildUI();
 
             if (IsOpen)
                 UIManager.instance.ClosePopup(POPUP_ID);
-            else {
+            else
+            {
+                RefreshAvailableNodeTypes();
                 UIManager.instance.TogglePopup(POPUP_ID, popup);
                 RefreshUI();
 
-                if (playerInventory != null) {
+                if (playerInventory != null)
+                {
                     playerInventory.OnItemChanged += OnInventoryChanged;
                     playerInventory.OnItemAdded += OnInventoryChanged;
                     playerInventory.OnItemRemoved += OnInventoryChanged;
                 }
 
-                if (RobotManager.instance != null) {
+                if (RobotManager.instance != null)
+                {
                     RobotManager.instance.OnRobotRegistered += OnRobotsChanged;
                     RobotManager.instance.OnRobotUnregistered += OnRobotsChanged;
                     RobotManager.instance.OnTaskAssigned += OnRobotTaskChanged;
@@ -97,8 +111,14 @@ namespace Game.Scripts.Robot {
                 }
             }
         }
-        
-        private VisualElement CreateRobotListPanel() {
+
+        private void RefreshAvailableNodeTypes()
+        {
+            availableNodeTypes = RobotManager.instance?.GetAllNodeTypes() ?? new List<NodeType>();
+        }
+
+        private VisualElement CreateRobotListPanel()
+        {
             var panel = UIBuilder.CreateContainer()
                 .WithName("robot-list-panel")
                 .WithGrow(1)
@@ -107,7 +127,7 @@ namespace Game.Scripts.Robot {
                 .WithPaddings(15)
                 .WithMargins(0, 10, 0, 0)
                 .Build();
-            
+
             var header = UIBuilder.CreateContainer()
                 .WithSize(Length.Percent(100), 40)
                 .WithBackgroundColor(HeaderColor)
@@ -119,7 +139,7 @@ namespace Game.Scripts.Robot {
                 .WithMargins(-15, -15, 15, -15)
                 .WithPaddings(0, 15, 0, 15)
                 .Build();
-            
+
             var titleLabel = UIBuilder.CreateLabel()
                 .WithText("Active Robots")
                 .WithColor(new Color(1f, 0.9f, 0.7f))
@@ -129,22 +149,23 @@ namespace Game.Scripts.Robot {
                 .Build<Label>();
             header.Add(titleLabel);
             panel.Add(header);
-            
+
             robotListScroll = new ScrollView(ScrollViewMode.Vertical);
             robotListScroll.style.flexGrow = 1;
             robotListScroll.style.maxHeight = Length.Percent(100);
             panel.Add(robotListScroll);
-            
+
             return panel;
         }
-        
-        private VisualElement CreateRightPanel() {
+
+        private VisualElement CreateRightPanel()
+        {
             var panel = UIBuilder.CreateContainer()
                 .WithName("right-panel")
                 .WithWidth(350)
                 .WithFlexDirection(FlexDirection.Column)
                 .Build();
-            
+
             var recipePanel = UIBuilder.CreateContainer()
                 .WithBackgroundColor(PanelBgColor)
                 .WithBorders(3, BorderColor, 12)
@@ -152,7 +173,7 @@ namespace Game.Scripts.Robot {
                 .WithGrow(1)
                 .WithMargins(0, 0, 10, 0)
                 .Build();
-            
+
             var header = UIBuilder.CreateContainer()
                 .WithSize(Length.Percent(100), 40)
                 .WithBackgroundColor(new Color(0.15f, 0.1f, 0.2f, 1f))
@@ -164,7 +185,7 @@ namespace Game.Scripts.Robot {
                 .WithMargins(-15, -15, 15, -15)
                 .WithPaddings(0, 15, 0, 15)
                 .Build();
-            
+
             var recipeTitle = UIBuilder.CreateLabel()
                 .WithText("Crafting")
                 .WithColor(new Color(0.9f, 0.8f, 1f))
@@ -174,35 +195,36 @@ namespace Game.Scripts.Robot {
                 .Build<Label>();
             header.Add(recipeTitle);
             recipePanel.Add(header);
-            
+
             recipeContainer = UIBuilder.CreateContainer()
                 .WithFlexDirection(FlexDirection.Column)
                 .Build();
             recipePanel.Add(recipeContainer);
-            
+
             panel.Add(recipePanel);
-            
+
             var buttonRow = UIBuilder.CreateContainer()
                 .WithFlexDirection(FlexDirection.Row)
                 .WithJustifyContent(Justify.SpaceBetween)
                 .Build();
-            
+
             recallAllButton = CreateStyledButton("Recall All", WarningButtonColor)
                 .OnClick(() => computer.RecallAllRobots())
                 .Build<Button>();
-            
+
             closeButton = CreateStyledButton("Close", ButtonBgColor)
                 .OnClick(() => computer.OnInteract())
                 .Build<Button>();
-            
+
             buttonRow.Add(recallAllButton);
             buttonRow.Add(closeButton);
             panel.Add(buttonRow);
-            
+
             return panel;
         }
-        
-        private UIBuilder CreateStyledButton(string text, Color bgColor) {
+
+        private UIBuilder CreateStyledButton(string text, Color bgColor)
+        {
             return UIBuilder.CreateButton()
                 .WithText(text)
                 .WithBackgroundColor(bgColor)
@@ -212,8 +234,9 @@ namespace Game.Scripts.Robot {
                 .WithBorders(2, new Color(0.5f, 0.5f, 0.5f), 6)
                 .WithMargins(0, 4, 0, 4);
         }
-        
-        private VisualElement CreateSmallButton(string text, Color bgColor, System.Action onClick) {
+
+        private VisualElement CreateSmallButton(string text, Color bgColor, System.Action onClick)
+        {
             return UIBuilder.CreateButton()
                 .WithText(text)
                 .WithFontSize(11)
@@ -225,16 +248,19 @@ namespace Game.Scripts.Robot {
                 .OnClick(onClick)
                 .Build<Button>();
         }
-        
-        private void RefreshUI() {
+
+        private void RefreshUI()
+        {
             RefreshRobotList();
             RefreshRecipeList();
         }
-        
-        private void RefreshRobotList() {
+
+        private void RefreshRobotList()
+        {
             robotListScroll.Clear();
             var robots = RobotManager.instance?.GetRobots();
-            if (robots == null || robots.Count == 0) {
+            if (robots == null || robots.Count == 0)
+            {
                 var emptyLabel = UIBuilder.CreateLabel()
                     .WithText("No robots active.")
                     .WithColor(Color.gray)
@@ -242,14 +268,16 @@ namespace Game.Scripts.Robot {
                 robotListScroll.Add(emptyLabel);
                 return;
             }
-            
-            foreach (var robot in robots) {
+
+            foreach (var robot in robots)
+            {
                 var robotEntry = CreateRobotEntry(robot);
                 robotListScroll.Add(robotEntry);
             }
         }
-        
-        private VisualElement CreateRobotEntry(Robot robot) {
+
+        private VisualElement CreateRobotEntry(Robot robot)
+        {
             var container = UIBuilder.CreateContainer()
                 .WithFlexDirection(FlexDirection.Row)
                 .WithAlignItems(Align.Center)
@@ -258,39 +286,41 @@ namespace Game.Scripts.Robot {
                 .WithMargins(0, 0, 5, 0)
                 .WithBorders(2, new Color(0.4f, 0.4f, 0.4f), 6)
                 .Build();
-            
-            container.RegisterCallback<ClickEvent>(evt => {
+
+            container.RegisterCallback<ClickEvent>(evt =>
+            {
                 selectedRobot = robot;
                 RefreshRobotList();
             });
-            
+
             var iconLabel = UIBuilder.CreateLabel()
                 .WithText(GetRobotTypeSymbol(robot.Type))
                 .WithFontSize(24)
                 .WithWidth(35)
                 .Build<Label>();
             container.Add(iconLabel);
-            
+
             var infoContainer = UIBuilder.CreateContainer()
                 .WithGrow(1)
                 .WithMargins(10, 0, 0, 0)
                 .Build();
-            
+
             var nameLabel = UIBuilder.CreateLabel()
                 .WithText($"{robot.Type} - {robot.name}")
                 .WithFontSize(14)
                 .WithFontStyle(FontStyle.Bold)
                 .Build<Label>();
             infoContainer.Add(nameLabel);
-            
+
             var statusLabel = UIBuilder.CreateLabel()
                 .WithText($"State: {robot.CurrentState} | Energy: {robot.EnergyPercentage:P0}")
                 .WithFontSize(12)
                 .WithColor(GetStateColor(robot.CurrentState))
                 .Build<Label>();
             infoContainer.Add(statusLabel);
-            
-            if (robot.QueuedTaskCount > 0) {
+
+            if (robot.QueuedTaskCount > 0)
+            {
                 var taskLabel = UIBuilder.CreateLabel()
                     .WithText($"Tasks: {robot.QueuedTaskCount} queued")
                     .WithFontSize(11)
@@ -298,9 +328,54 @@ namespace Game.Scripts.Robot {
                     .Build<Label>();
                 infoContainer.Add(taskLabel);
             }
-            
+
+            // Priority dropdown for MINER robots (always visible)
+            if (robot.Type == RobotType.MINER)
+            {
+                var priorityContainer = UIBuilder.CreateContainer()
+                    .WithFlexDirection(FlexDirection.Row)
+                    .WithAlignItems(Align.Center)
+                    .WithMargins(0, 5, 0, 0)
+                    .Build();
+
+                var priorityLabel = new Label("Priority: ");
+                priorityLabel.style.color = Color.white;
+                priorityLabel.style.fontSize = 11;
+                priorityLabel.style.marginRight = 5;
+                priorityContainer.Add(priorityLabel);
+
+                var dropdown = new DropdownField(GetPriorityOptions(), robot.PrioritizedNodeType?.name ?? "None");
+                // Stylize the dropdown
+                dropdown.style.backgroundColor = new Color(0.15f, 0.15f, 0.15f);
+                dropdown.style.color = Color.white;
+                dropdown.style.borderTopWidth = 1;
+                dropdown.style.borderBottomWidth = 1;
+                dropdown.style.borderLeftWidth = 1;
+                dropdown.style.borderRightWidth = 1;
+                dropdown.style.borderTopColor = new Color(0.5f, 0.5f, 0.5f);
+                dropdown.style.borderBottomColor = new Color(0.5f, 0.5f, 0.5f);
+                dropdown.style.borderLeftColor = new Color(0.5f, 0.5f, 0.5f);
+                dropdown.style.borderRightColor = new Color(0.5f, 0.5f, 0.5f);
+                dropdown.style.borderTopLeftRadius = 4;
+                dropdown.style.borderTopRightRadius = 4;
+                dropdown.style.borderBottomLeftRadius = 4;
+                dropdown.style.borderBottomRightRadius = 4;
+                dropdown.style.paddingLeft = 6;
+                dropdown.style.paddingRight = 6;
+                dropdown.style.fontSize = 11;
+                dropdown.style.width = 120;
+                dropdown.RegisterValueChangedCallback(evt =>
+                {
+                    NodeType selected = evt.newValue == "None" ? null : availableNodeTypes.Find(t => t.name == evt.newValue);
+                    robot.PrioritizedNodeType = selected;
+                    RefreshRobotList(); // refresh to update dropdown
+                });
+                priorityContainer.Add(dropdown);
+                infoContainer.Add(priorityContainer);
+            }
+
             container.Add(infoContainer);
-            
+
             var energyBarContainer = UIBuilder.CreateContainer()
                 .WithWidth(50)
                 .WithHeight(8)
@@ -315,21 +390,24 @@ namespace Game.Scripts.Robot {
                 .Build();
             energyBarContainer.Add(energyFill);
             container.Add(energyBarContainer);
-            
-            if (selectedRobot == robot) {
+
+            if (selectedRobot == robot)
+            {
                 var actionContainer = UIBuilder.CreateContainer()
                     .WithFlexDirection(FlexDirection.Row)
                     .WithMargins(10, 0, 0, 0)
                     .Build();
-                
-                var workBtn = CreateSmallButton("Work", new Color(0.3f, 0.5f, 0.3f), () => {
+
+                var workBtn = CreateSmallButton("Work", new Color(0.3f, 0.5f, 0.3f), () =>
+                {
                     robot.ClearAllTasks();
                     robot.FindWork();
                     RefreshUI();
                 });
                 actionContainer.Add(workBtn);
-                
-                var recallBtn = CreateSmallButton("Recall", new Color(0.5f, 0.3f, 0.2f), () => {
+
+                var recallBtn = CreateSmallButton("Recall", new Color(0.5f, 0.3f, 0.2f), () =>
+                {
                     robot.ClearAllTasks();
                     robot.ReturnToBaseToRecharge();
                     RefreshUI();
@@ -338,20 +416,31 @@ namespace Game.Scripts.Robot {
                 actionContainer.Add(recallBtn);
                 container.Add(actionContainer);
             }
-            
+
             return container;
         }
-        
-        private void RefreshRecipeList() {
+
+        private List<string> GetPriorityOptions()
+        {
+            var options = new List<string> { "None" };
+            options.AddRange(availableNodeTypes.ConvertAll(t => t.name));
+            return options;
+        }
+
+        private void RefreshRecipeList()
+        {
             recipeContainer.Clear();
-            
-            foreach (var recipe in recipes) {
+
+            foreach (var recipe in recipes)
+            {
                 var recipeEntry = CreateRecipeEntry(recipe);
                 recipeContainer.Add(recipeEntry);
             }
         }
-        
-        private VisualElement CreateRecipeEntry(RobotRecipe recipe) {
+
+        private VisualElement CreateRecipeEntry(RobotRecipe recipe)
+        {
+            // Main container: vertical layout
             var container = UIBuilder.CreateContainer()
                 .WithFlexDirection(FlexDirection.Column)
                 .WithBackgroundColor(selectedRecipe == recipe ? new Color(0.3f, 0.2f, 0.3f) : new Color(0.2f, 0.2f, 0.2f))
@@ -359,51 +448,85 @@ namespace Game.Scripts.Robot {
                 .WithMargins(0, 0, 8, 0)
                 .WithBorders(2, new Color(0.4f, 0.4f, 0.4f), 6)
                 .Build();
-            
-            container.RegisterCallback<ClickEvent>(evt => {
+
+            container.RegisterCallback<ClickEvent>(evt =>
+            {
                 selectedRecipe = recipe;
                 RefreshRecipeList();
             });
-            
-            var headerRow = UIBuilder.CreateContainer()
+
+            // Top row: icon + name (left), requirements (right)
+            var topRow = UIBuilder.CreateContainer()
+                .WithFlexDirection(FlexDirection.Row)
+                .WithAlignItems(Align.Center)
+                .WithJustifyContent(Justify.SpaceBetween)
+                .Build();
+
+            // Left side: icon and name
+            var leftInfo = UIBuilder.CreateContainer()
                 .WithFlexDirection(FlexDirection.Row)
                 .WithAlignItems(Align.Center)
                 .Build();
-            
+
             var iconLabel = UIBuilder.CreateLabel()
                 .WithText(GetRobotTypeSymbol(recipe.robotType))
                 .WithFontSize(20)
                 .WithWidth(30)
                 .Build<Label>();
-            headerRow.Add(iconLabel);
-            
+            leftInfo.Add(iconLabel);
+
             var nameLabel = UIBuilder.CreateLabel()
                 .WithText(recipe.displayName)
                 .WithFontSize(14)
                 .WithFontStyle(FontStyle.Bold)
                 .WithMargins(10, 0, 0, 0)
                 .Build<Label>();
-            headerRow.Add(nameLabel);
-            
-            container.Add(headerRow);
-            
-            string reqText = "";
+            leftInfo.Add(nameLabel);
+
+            topRow.Add(leftInfo);
+
+            // Right side: requirements list (vertical)
+            var requirementsContainer = UIBuilder.CreateContainer()
+                .WithFlexDirection(FlexDirection.Column)
+                .WithAlignItems(Align.FlexEnd)
+                .WithMargins(0, 0, 0, 0)
+                .Build();
+
             bool canCraft = playerInventory != null;
-            
-            foreach (var req in recipe.requirements) {
+
+            foreach (var req in recipe.requirements)
+            {
                 bool hasEnough = playerInventory != null && playerInventory.HasItem(req.item.Create(1), req.quantity);
                 if (!hasEnough) canCraft = false;
-                reqText += $"{req.item.ItemName} x{req.quantity} {(hasEnough ? "✓" : "✗")}\n";
+
+                var reqRow = UIBuilder.CreateContainer()
+                    .WithFlexDirection(FlexDirection.Row)
+                    .WithAlignItems(Align.Center)
+                    .WithMargins(0, 0, 2, 0)
+                    .Build();
+
+                var reqText = UIBuilder.CreateLabel()
+                    .WithText($"{req.item.ItemName} x{req.quantity}")
+                    .WithFontSize(11)
+                    .WithColor(hasEnough ? Color.green : new Color(1f, 0.7f, 0.4f))
+                    .WithMargins(0, 0, 0, 8)
+                    .Build<Label>();
+
+                var checkMark = UIBuilder.CreateLabel()
+                    .WithText(hasEnough ? " ✓" : " ✗")
+                    .WithFontSize(11)
+                    .WithColor(hasEnough ? Color.green : Color.red)
+                    .Build<Label>();
+
+                reqRow.Add(reqText);
+                reqRow.Add(checkMark);
+                requirementsContainer.Add(reqRow);
             }
-            
-            var reqLabel = UIBuilder.CreateLabel()
-                .WithText(reqText.TrimEnd('\n'))
-                .WithFontSize(11)
-                .WithColor(Color.gray)
-                .WithMargins(0, 5, 5, 5)
-                .Build<Label>();
-            container.Add(reqLabel);
-            
+
+            topRow.Add(requirementsContainer);
+            container.Add(topRow);
+
+            // Craft button
             var craftButton = CreateStyledButton("Craft", canCraft ? CraftButtonColor : ButtonBgColor)
                 .WithFontSize(12)
                 .WithPaddings(6, 12, 6, 12)
@@ -412,12 +535,14 @@ namespace Game.Scripts.Robot {
 
             craftButton.SetEnabled(canCraft);
             container.Add(craftButton);
-            
+
             return container;
         }
-        
-        private string GetRobotTypeSymbol(RobotType type) {
-            return type switch {
+
+        private string GetRobotTypeSymbol(RobotType type)
+        {
+            return type switch
+            {
                 RobotType.PLANTER => "🌱",
                 RobotType.HARVESTER => "🌾",
                 RobotType.MINER => "⛏️",
@@ -425,18 +550,20 @@ namespace Game.Scripts.Robot {
                 _ => "🤖"
             };
         }
-        
-        private Color GetStateColor(RobotState state) {
-            return state switch {
-                RobotState.IDLE => Color.green,
+
+        private Color GetStateColor(RobotState state)
+        {
+            return state switch
+            {
+                RobotState.IDLE => Color.cyan,
                 RobotState.MOVING => Color.yellow,
-                RobotState.WORKING => Color.cyan,
+                RobotState.WORKING => Color.green,
                 RobotState.RETURNING => new Color(1f, 0.5f, 0f),
                 RobotState.RECHARGING => Color.blue,
                 _ => Color.gray
             };
         }
-        
+
         private void OnInventoryChanged(Item item, int slot) => RefreshUI();
         private void OnRobotsChanged(Robot robot) => RefreshUI();
         private void OnRobotTaskChanged(Robot robot, RobotTask task) => RefreshUI();

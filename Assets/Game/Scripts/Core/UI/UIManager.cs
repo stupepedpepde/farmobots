@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Game.Scripts.Core.Menu;
 using Game.Scripts.Inventory;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -12,9 +13,16 @@ namespace Game.Scripts.Core.UI {
         private UIDocument doc;
         [SerializeField] private PanelSettings panelSettings;
         private VisualElement root;
+
         private Dictionary<string, UIPopup> activePopups = new Dictionary<string, UIPopup>();
         private HashSet<UIPopup> registeredPopups = new HashSet<UIPopup>();
         private Stack<VisualElement> uiStack = new Stack<VisualElement>();
+
+        private Dictionary<string, UIMenu> activeMenus = new Dictionary<string, UIMenu>();
+        private Stack<UIMenu> menuStack = new Stack<UIMenu>();
+
+        private MainMenu mainMenu;
+        private PauseMenu pauseMenu;
 
         public int InitializationOrder => 40;
 
@@ -30,11 +38,10 @@ namespace Game.Scripts.Core.UI {
         }
 
         public void Initialize() {
-            GameEvents.OnUISceneRequested += HandleUISceneRequest;
+
         }
 
         private void OnDestroy() {
-            GameEvents.OnUISceneRequested -= HandleUISceneRequest;
             GameManager.instance?.Unregister(this as IInitializable);
         }
 
@@ -55,6 +62,8 @@ namespace Game.Scripts.Core.UI {
                 doc.rootVisualElement?.Clear();
             }
         }
+
+        #region Popups
 
         public void RegisterPopup(UIPopup popup) {
             if (popup != null) registeredPopups.Add(popup);
@@ -147,6 +156,77 @@ namespace Game.Scripts.Core.UI {
             SetUIState(false);
         }
 
+        #endregion
+
+        #region Menus
+
+        public void ShowMenu(string id, UIMenu menu) {
+            if (activeMenus.ContainsKey(id))
+                CloseMenu(id);
+
+            menu.Show(root);
+            activeMenus[id] = menu;
+            menuStack.Push(menu);
+
+            SetUIState(true);
+
+            GameManager.instance?.SetGameState(id == "pause" ? GameState.PAUSED : GameState.MENU);
+        }
+
+        public void CloseMenu(string id) {
+            if (activeMenus.TryGetValue(id, out var menu)) {
+                menu.Close();
+                activeMenus.Remove(id);
+
+                if (menuStack.Count > 0 && menuStack.Peek() == menu)
+                    menuStack.Pop();
+            }
+
+            if (menuStack.Count == 0) {
+                SetUIState(false);
+
+                GameManager.instance?.SetGameState(GameState.PLAYING);
+            }
+        }
+
+        public void CloseAllMenus() {
+            foreach (var menu in activeMenus.Values)
+                menu.Close();
+
+            activeMenus.Clear();
+            menuStack.Clear();
+
+            SetUIState(false);
+
+            GameManager.instance?.SetGameState(GameState.PLAYING);
+        }
+
+        public void ShowMainMenu() {
+            CloseAllMenus();
+
+            if (mainMenu == null)
+                mainMenu = MainMenu.CreateAndShow();
+
+            mainMenu.Show(root);
+
+            SetUIState(true);
+            GameManager.instance?.SetGameState(GameState.MENU);
+        }
+
+        public void ShowPauseMenu() {
+            CloseAllMenus();
+
+            if (pauseMenu == null)
+                pauseMenu = PauseMenu.CreateAndShow();
+
+            pauseMenu.Show(root);
+
+            SetUIState(true);
+            GameManager.instance?.SetGameState(GameState.PAUSED);
+        }
+
+        #endregion
+
         #region Elements
 
         public VisualElement CreateContainer(string name = "") =>
@@ -208,6 +288,13 @@ namespace Game.Scripts.Core.UI {
 
         #endregion
 
+        private void HandleUISceneRequest(object request, GameState state) {
+            if (request is string menuId) {
+                if (menuId == "pause") ShowPauseMenu();
+                else if (menuId == "mainmenu") ShowMainMenu();
+            }
+        }
+
         private void SetUIState(bool visibility) {
             if (visibility) {
                 GameManager.instance?.SetGameState(GameState.INTERFACE);
@@ -218,10 +305,6 @@ namespace Game.Scripts.Core.UI {
                 Cursor.lockState = CursorLockMode.Locked;
                 Cursor.visible = false;
             }
-        }
-
-        private void HandleUISceneRequest(object request, GameState state) {
-
         }
 
         #region Getters

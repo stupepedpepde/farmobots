@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6f4aae43d4f7414591e054531960f7b3, type: 3}
+  m_Name: Titanium
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Scripts.Core.Environment.Terrain.Node.NodeType
+  prefab: {fileID: 3486098747840541984, guid: 64a9ec470a8e61c49a6a869dbdda13b9, type: 3}
+  possibleDrops:
+  - {fileID: 11400000, guid: cf61004e49163454f934c533f07ab441, type: 2}
+  minQuantity: 1
+  maxQuantity: 2
+  miningTime: 15
+  minHeight: 0
+  maxHeight: 0
+  minDistanceFromSameType: 10
+  isBuried: 1
+  revealRadius: 5
+  buriedVisualPrefab: {fileID: 604276600879813905, guid: b0060c3146149c340bc841835cc49af1, type: 3}

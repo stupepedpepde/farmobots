@@ -4,7 +4,7 @@ using Game.Scripts.Core.Input;
 using UnityEngine;
 
 namespace Game.Scripts.Player {
-    public class Player : MonoBehaviour, IInitializable, IUpdatable, ILateUpdatable  {
+    public class Player : MonoBehaviour, IInitializable, IUpdatable, ILateUpdatable {
         [SerializeField] private PlayerCharacter playerCharacter;
         [SerializeField] private PlayerCamera playerCamera;
         [SerializeField] private PlayerInventory playerInventory;

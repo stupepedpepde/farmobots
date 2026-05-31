@@ -3,6 +3,7 @@ using Game.Scripts.Core.Environment;
 using Game.Scripts.Core.Input;
 using Game.Scripts.Inventory;
 using Game.Scripts.Planting;
+using Game.Scripts.Plants;
 using Game.Scripts.Robot;
 using UnityEngine.SceneManagement;
 

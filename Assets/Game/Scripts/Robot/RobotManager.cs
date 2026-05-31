@@ -247,8 +247,56 @@ namespace Game.Scripts.Robot
         }
 
         private PlantableSpot FindNearestThirstySpot(Vector3 position, float maxDistance) {
-            // for now return null
-            return null;
+            PlantableSpot closest = null;
+            float closestDist = maxDistance;
+            foreach (var plantable in plantables) {
+                if (plantable == null) continue;
+                foreach (var spot in plantable.AllSpots) {
+                    if (spot == null || !spot.isOccupied) continue;
+                    var plant = spot.currentPlant;
+                    if (plant != null && plant.NeedsWater) {
+                        float dist = Vector3.Distance(position, spot.transform.position);
+                        if (dist < closestDist) {
+                            closestDist = dist;
+                            closest = spot;
+                        }
+                    }
+                }
+            }
+            return closest;
+        }
+
+        public PlantableSpot FindThirstySpotByPriority(Vector3 position, float maxDistance = 100f) {
+            PlantableSpot urgentSpot = null;
+            float urgentDist = maxDistance;
+            PlantableSpot thirstySpot = null;
+            float thirstyDist = maxDistance;
+
+            foreach (var plantable in plantables) {
+                if (plantable == null) continue;
+                foreach (var spot in plantable.AllSpots) {
+                    if (spot == null || !spot.isOccupied) continue;
+                    var plant = spot.currentPlant;
+                    if (plant != null && plant.NeedsWater) {
+                        float waterPercent = plant.GetWaterPercentage();
+                        float dist = Vector3.Distance(position, spot.transform.position);
+
+                        if (waterPercent < 0.1f) { // Critical: cannot grow
+                            if (dist < urgentDist) {
+                                urgentDist = dist;
+                                urgentSpot = spot;
+                            }
+                        } else if (waterPercent < 0.5f) { // Thirsty but still growing
+                            if (dist < thirstyDist) {
+                                thirstyDist = dist;
+                                thirstySpot = spot;
+                            }
+                        }
+                    }
+                }
+            }
+            // Return urgent spot first, otherwise thirsty spot
+            return urgentSpot != null ? urgentSpot : thirstySpot;
         }
 
         public Node FindNearestNode(Vector3 position, float maxDistance = 100f) {
@@ -264,6 +312,29 @@ namespace Game.Scripts.Robot
             }
 
             return closest;
+        }
+
+        public Node FindNearestNodeOfType(Vector3 position, NodeType targetType, float maxDistance = 100f) {
+            Node closest = null;
+            float closestDist = maxDistance;
+            foreach (var node in resourceNodes) {
+                if (node == null || !node.HasLoot()) continue;
+                if (node.nodeType != targetType) continue;   // type check
+                float dist = Vector3.Distance(position, node.transform.position);
+                if (dist < closestDist) {
+                    closestDist = dist;
+                    closest = node;
+                }
+            }
+            return closest;
+        }
+
+        public List<NodeType> GetAllNodeTypes() {
+            HashSet<NodeType> types = new HashSet<NodeType>();
+            foreach (var node in resourceNodes)
+                if (node != null && node.nodeType != null)
+                    types.Add(node.nodeType);
+            return new List<NodeType>(types);
         }
 
         private bool AreAllSpotsAvailableForMultiTile(PlantableSpot centerSpot, int plantSize) {

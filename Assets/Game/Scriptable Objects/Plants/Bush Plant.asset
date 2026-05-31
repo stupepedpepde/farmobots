@@ -18,9 +18,17 @@ MonoBehaviour:
   - {fileID: 6490491346398155316, guid: b1a5f6a42b3361645beb9457d27f8024, type: 3}
   - {fileID: 3443626255250016760, guid: df8e5e284fd16154f8312093c6310f81, type: 3}
   growthTime: 10
+  oxygenMin: 2
+  oxygenMax: 5
+  carbonMin: 5
+  carbonMax: 15
+  nitrogenMin: 30
+  nitrogenMax: 70
   oxygenProduction: 0.01
   plantingTime: 10
   harvestTime: 8
+  requiresWatering: 1
+  maxWater: 100
   plantSize: 1
   footprintOffset: {x: 0, y: 0}
   harvestDrops:

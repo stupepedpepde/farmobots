@@ -36,6 +36,8 @@ namespace Game.Scripts.Core.Environment {
     }
 
     public class TimeManager : MonoBehaviour, IInitializable, IUpdatable {
+        public static TimeManager instance { get; private set; }
+
         [Header("Time Settings")]
         [SerializeField] private float dayDurationInSeconds = 300.0f;
         [SerializeField] private float currentTimeOfDay = 0.5f;
@@ -67,6 +69,12 @@ namespace Game.Scripts.Core.Environment {
         public int InitializationOrder => 1;
 
         private void Awake() {
+            if (instance != null && instance != this) {
+                Destroy(gameObject);
+                return;
+            }
+
+            instance = this;
             GameManager.instance?.Register(this as IInitializable);
         }
 

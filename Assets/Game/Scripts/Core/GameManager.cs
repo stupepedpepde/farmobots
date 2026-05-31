@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Game.Scripts.Core.UI;
 using UnityEngine;
 
 namespace Game.Scripts.Core {
@@ -84,6 +85,7 @@ namespace Game.Scripts.Core {
             isInitialized = true;
             Debug.Log("All systems initialized!");
             SetGameState(GameState.MENU);
+            UIManager.instance?.ShowMainMenu();
         }
 
         public void InitializeLate(IInitializable system) {

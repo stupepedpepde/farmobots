@@ -1,15 +1,11 @@
 ﻿using System;
-using System.ComponentModel;
 using Game.Scripts.Core.Building;
-using Game.Scripts.Core.Environment.Terrain.Node;
 using Game.Scripts.Core.HUD;
+using Game.Scripts.Core.UI;
 using Game.Scripts.Inventory;
 using Game.Scripts.Planting;
 using Game.Scripts.Player;
 using Game.Scripts.Robot;
-using Unity.Mathematics;
-using Unity.VisualScripting;
-using Unity.VisualScripting.FullSerializer;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -19,11 +15,9 @@ namespace Game.Scripts.Core.Input {
 
         private InputActions inputActions;
 
-        // player character
         public CharacterInput characterInput { get; private set; }
         public CameraInput cameraInput { get; private set; }
 
-        // interactions
         private IInteractable currentLookAtInteractable;
         private float interactionCheckTimer;
         private const float INTERACTION_CHECK_INTERVAL = 0.1f;
@@ -37,7 +31,6 @@ namespace Game.Scripts.Core.Input {
             }
 
             instance = this;
-
             GameManager.instance?.Register(this as IInitializable);
         }
 
@@ -76,13 +69,15 @@ namespace Game.Scripts.Core.Input {
         }
 
         private void UpdateGeneral() {
-            if (inputActions.General.Pause.WasPressedThisFrame()) GameEvents.RequestUIElement("pause", GameState.PAUSED);
+            if (inputActions.General.Pause.WasPressedThisFrame()) UIManager.instance?.ShowPauseMenu();
 
-            if (inputActions.General.Inventory.WasPressedThisFrame())
+            if (inputActions.General.Inventory.WasPressedThisFrame()) {
                 if (BuildingSystem.instance != null && BuildingSystem.instance.IsBuildModeActive) {
                     GameEvents.RequestBuildingUI();
-                } else
+                } else {
                     GameEvents.RequestInventory();
+                }
+            }
 
             if (inputActions.PlayerActions.Interact.WasPressedThisFrame())
                 RaycastForInteraction();
@@ -90,14 +85,15 @@ namespace Game.Scripts.Core.Input {
             if (inputActions.PlayerActions.BuildMode.WasPressedThisFrame())
                 BuildingSystem.instance?.SetBuildMode(!BuildingSystem.instance?.GetBuildMode() ?? false);
 
-            if (inputActions.PlayerActions.Place.WasPressedThisFrame())
+            if (inputActions.PlayerActions.Place.WasPressedThisFrame()) {
                 if (BuildingSystem.instance?.GetBuildMode() ?? true)
                     GameEvents.RequestBuilding();
                 else
                     GameEvents.RequestPlanting(InventoryService.PlayerInventory);
+            }
 
             if (inputActions.PlayerActions.SpawnRobot.WasPressedThisFrame())
-                RobotBuilder.CreateMiner(GameEvents.GetPlayerPosition() + new Vector3(0.0f, 2.0f, 0.0f));
+                RobotBuilder.CreateGardener(GameEvents.GetPlayerPosition() + new Vector3(0.0f, 2.0f, 0.0f));
 
             if (inputActions.PlayerActions.Rotate.WasPressedThisFrame() && BuildingSystem.instance != null && BuildingSystem.instance.IsBuildModeActive)
                 BuildingSystem.instance.RotateGhost();
@@ -113,7 +109,7 @@ namespace Game.Scripts.Core.Input {
                 currentLookAtInteractable = hit;
                 if (hit != null) {
                     string key = inputActions.PlayerActions.Interact.GetBindingDisplayString();
-                    HUDManager.instance?.ShowInteractionPrompt(key, hit.GetInteractionPrompt());
+                    HUDManager.instance?.UpdateInteractionPrompt(hit, key);
                 } else {
                     HUDManager.instance?.HideInteractionPrompt();
                 }
@@ -136,12 +132,10 @@ namespace Game.Scripts.Core.Input {
 
         private bool RaycastForInteraction() {
             IInteractable obj = GetInteractableInSight();
-
             if (obj != null) {
                 obj.OnInteract();
                 return true;
             }
-
             return false;
         }
     }

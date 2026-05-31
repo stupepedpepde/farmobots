@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Game.Scripts.Core;
+using Game.Scripts.Core.Environment;
 using Game.Scripts.Core.Environment.Terrain;
 using Game.Scripts.Core.Environment.Terrain.Node;
 using Game.Scripts.Inventory;
@@ -33,7 +34,6 @@ namespace Game.Scripts.Robot {
         [Header("Inventory")]
         [SerializeField] private RobotInventory inventory;
         [SerializeField] private float interactionRange = 3.0f;
-        // [Obsolete] private PlantSO selectedPlant;  // removed – robots use seeds from inventory
         [Space]
         [Header("Robot Stats")]
         [SerializeField] private float moveSpeed = 5.0f;
@@ -48,6 +48,13 @@ namespace Game.Scripts.Robot {
         [SerializeField] private float rechargeRate = 5f;
         [SerializeField] private float lowEnergyThreshold = 20f;
         [Space]
+        [Header("Flashlight")]
+        [SerializeField] private float flashlightIntensity = 30f;
+        [SerializeField] private float flashlightRange = 100f;
+        [SerializeField] private float flashlightInnerSpotAngle = 50f;
+        [SerializeField] private float flashlightOuterSpotAngle = 80f;
+        [SerializeField] private Color flashlightColor = Color.white;
+        [Space]
         [Header("Task System")]
         [SerializeField] private int maxQueuedTasks = 5;
         [Space]
@@ -60,13 +67,22 @@ namespace Game.Scripts.Robot {
         [SerializeField] private float currentEnergy;
         [SerializeField] private PlantableSpot currentTargetSpot;
         [SerializeField] private Node currentTargetNode;
+        [SerializeField] private NodeType prioritizedNodeType;
         [SerializeField] private Vector3 homePosition;
         [SerializeField] private Queue<RobotTask> taskQueue = new Queue<RobotTask>();
         [SerializeField] private RobotTask currentTask;
         [SerializeField] private float workTimer;
 
+        private Light flashlightLight;
+        private bool isSubscribedToTime = false;
+
         private float idleWanderTimer;
         private Vector3 idleDestination;
+
+        public NodeType PrioritizedNodeType {
+            get => prioritizedNodeType;
+            set => prioritizedNodeType = value;
+        }
 
         public int InitializationOrder => 50;
 
@@ -96,12 +112,15 @@ namespace Game.Scripts.Robot {
                     FindWork();
             };
 
+            SetupFlashlight();
+
             RobotManager.instance?.RegisterRobot(this);
         }
 
         private void OnDestroy() {
             RobotManager.instance?.UnregisterRobot(this);
             GameManager.instance?.Unregister(this as IInitializable);
+            UnsubscribeFromTimeManager();
         }
 
         public void OnInteract() {
@@ -227,6 +246,52 @@ namespace Game.Scripts.Robot {
         }
         #endregion
 
+        #region Flashlight
+        private void SetupFlashlight() {
+            GameObject lightGO = new GameObject("Flashlight");
+            lightGO.transform.SetParent(transform);
+            lightGO.transform.localPosition = new Vector3(0f, 0f, 0.25f);
+            lightGO.transform.localRotation = Quaternion.identity;
+
+            flashlightLight = lightGO.AddComponent<Light>();
+            flashlightLight.type = LightType.Spot;
+            flashlightLight.intensity = flashlightIntensity;
+            flashlightLight.range = flashlightRange;
+            flashlightLight.spotAngle = flashlightInnerSpotAngle;
+            flashlightLight.spotAngle = flashlightOuterSpotAngle;
+            flashlightLight.color = flashlightColor;
+            flashlightLight.shadows = LightShadows.Soft;
+
+            flashlightLight.enabled = false;
+
+            SubscribeToTimeManager();
+        }
+
+        private void SubscribeToTimeManager() {
+            if (isSubscribedToTime) return;
+            if (TimeManager.instance == null) return;
+
+            TimeManager.instance.OnDayStageChanged += OnDayStageChanged;
+            isSubscribedToTime = true;
+
+            OnDayStageChanged(TimeManager.instance.GetCurrentDayStage);
+        }
+
+        private void UnsubscribeFromTimeManager() {
+            if (!isSubscribedToTime) return;
+            if (TimeManager.instance != null)
+                TimeManager.instance.OnDayStageChanged -= OnDayStageChanged;
+            isSubscribedToTime = false;
+        }
+
+        private void OnDayStageChanged(DayStage newStage) {
+            if (flashlightLight == null) return;
+            bool shouldBeOn = true;
+            Debug.Log($"flashlight {shouldBeOn}");
+            flashlightLight.enabled = shouldBeOn;
+        }
+        #endregion
+
         #region Task Management
         public void EnqueueTask(RobotTask task) {
             if (taskQueue.Count >= maxQueuedTasks) return;
@@ -305,14 +370,12 @@ namespace Game.Scripts.Robot {
             InventoryComponent inv = inventory.GetInventoryComponent();
             if (inv == null) return false;
 
-            // Get the first seed from inventory
             Item seed = GetFirstSeedFromInventory(inv);
             if (seed == null) {
                 Debug.LogWarning($"{name} has no seeds to plant.");
                 return false;
             }
 
-            // Direct planting using the seed
             bool planted = PlantingSystem.instance.TryPlantWithSeed(inv, currentTargetSpot, seed);
             if (planted) {
                 Debug.Log($"{name} planted {seed.details.ItemName} at {currentTargetSpot.name}");
@@ -351,8 +414,40 @@ namespace Game.Scripts.Robot {
 
         private bool PerformWatering() {
             if (currentTargetSpot == null || !currentTargetSpot.isOccupied) return false;
-            // watering logic here (future)
+            Plant plant = currentTargetSpot.currentPlant;
+            if (plant == null) return false;
+            if (!plant.NeedsWater) return false;
+
+            // Check if robot has ice in inventory
+            InventoryComponent inv = inventory.GetInventoryComponent();
+            if (inv == null) return false;
+
+            Item ice = GetIceFromInventory(inv);
+            if (ice == null || ice.quantity < 1) {
+                Debug.LogWarning($"{name} has no ice to water the plant.");
+                return false;
+            }
+
+            // Consume one ice
+            if (!inv.TryConsumeItem(ice, 1)) {
+                Debug.LogWarning($"{name} failed to consume ice.");
+                return false;
+            }
+
+            // Water the plant fully
+            plant.Water(plant.GetMaxWater());
+            Debug.Log($"{name} watered {plant.name} using ice.");
             return true;
+        }
+
+        private Item GetIceFromInventory(InventoryComponent inv) {
+            for (int i = 0; i < inv.GetCapacity(); i++) {
+                Item item = inv.GetItem(i);
+                if (item != null && item.details.ItemName.ToLower() == "ice") {
+                    return item;
+                }
+            }
+            return null;
         }
 
         private bool PerformMining() {
@@ -374,11 +469,8 @@ namespace Game.Scripts.Robot {
             switch (type) {
                 case RobotType.PLANTER:
                     if (!HasSeeds()) return;
-                    // Find a suitable empty spot (size 1 for now; multi‑tile could be supported later)
                     currentTargetSpot = RobotManager.instance.FindSuitableSpot(this, transform.position);
                     if (currentTargetSpot != null) {
-                        // Work duration will be determined from the seed's plant when the task executes.
-                        // Use a default duration; it will be overridden by the plant's plantingTime if needed.
                         float workDuration = 2f;
                         RobotTask task = new RobotTask {
                             targetSpot = currentTargetSpot,
@@ -401,7 +493,11 @@ namespace Game.Scripts.Robot {
                     }
                     break;
                 case RobotType.MINER:
-                    currentTargetNode = RobotManager.instance.FindNearestNode(transform.position);
+                    if (prioritizedNodeType != null)
+                        currentTargetNode = RobotManager.instance.FindNearestNodeOfType(transform.position, prioritizedNodeType);
+                    else
+                        currentTargetNode = RobotManager.instance.FindNearestNode(transform.position);
+
                     if (currentTargetNode != null) {
                         RobotTask task = new RobotTask {
                             targetNode = currentTargetNode,
@@ -412,7 +508,15 @@ namespace Game.Scripts.Robot {
                     }
                     break;
                 case RobotType.GARDENER:
-                    currentTargetSpot = RobotManager.instance.FindSuitableSpot(this, transform.position);
+                    InventoryComponent inv = inventory.GetInventoryComponent();
+                    if (inv == null) break;
+                    Item ice = GetIceFromInventory(inv);
+                    if (ice == null || ice.quantity < 1) {
+                        Debug.Log($"{name} has no ice, cannot water.");
+                        break;
+                    }
+
+                    currentTargetSpot = RobotManager.instance.FindThirstySpotByPriority(transform.position);
                     if (currentTargetSpot != null) {
                         RobotTask task = new RobotTask {
                             targetSpot = currentTargetSpot,
@@ -420,7 +524,8 @@ namespace Game.Scripts.Robot {
                             workDuration = 1.5f
                         };
                         AssignImmediateTask(task);
-                    }
+                    } else
+                        Debug.Log($"{name} found no plants below 50% water.");
                     break;
             }
         }
@@ -437,7 +542,6 @@ namespace Game.Scripts.Robot {
         }
 
         public void SetHomePosition(Vector3 pos) => homePosition = pos;
-        // Removed SetSelectedPlant – robots no longer need a global selected plant
         public void RechargeEnergy(float amount) => currentEnergy = Mathf.Min(maxEnergy, currentEnergy + amount);
         public void DrainEnergy(float amount) => currentEnergy = Mathf.Max(0, currentEnergy - amount);
         public bool HasSufficientEnergy(float requiredPercentage = 0.2f) => EnergyPercentage >= requiredPercentage;
@@ -512,9 +616,6 @@ namespace Game.Scripts.Robot {
             get => maxQueuedTasks;
             set => maxQueuedTasks = Mathf.Max(1, value);
         }
-
-        // SelectedPlant property is removed because robots use seeds directly.
-        // If you need to keep it for other systems, you can add it back but it won't affect planting.
 
         public float GetInteractionRange() => interactionRange;
         public string GetInteractionPrompt() => $"Open {type}";

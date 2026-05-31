@@ -5,13 +5,7 @@ using UnityEngine;
 namespace Game.Scripts.Core.Environment {
     public enum WeatherType {
         CLEAR,
-        RAIN,
-        STORM,
-        WIND,
-        AURORA,
-        SANDSTORM,
-        FOG,
-        SNOW
+        RAIN
     }
 
     [Serializable]
@@ -21,17 +15,16 @@ namespace Game.Scripts.Core.Environment {
     }
 
     public class WeatherManager : MonoBehaviour, IInitializable, IUpdatable {
+        public static WeatherManager instance {get; private set;}
+
         [Header("Weather Settings")]
         [SerializeField] private WeatherType initialWeather = WeatherType.CLEAR;
         [SerializeField] private float weatherChangeInterval = 150.0f;
         [SerializeField] private AnimationCurve weatherTransitionCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
         [Space]
         [SerializeField] private List<WeatherData> weatherData = new List<WeatherData> {
-            new WeatherData { type = WeatherType.CLEAR, probability = 0.6f },
+            new WeatherData { type = WeatherType.CLEAR, probability = 0.85f },
             new WeatherData { type = WeatherType.RAIN, probability = 0.15f },
-            new WeatherData { type = WeatherType.STORM, probability = 0.05f },
-            new WeatherData { type = WeatherType.WIND, probability = 0.15f },
-            new WeatherData { type = WeatherType.AURORA, probability = 0.05f }
         };
         [Space]
         [Header("Skybox Control")]
@@ -52,6 +45,12 @@ namespace Game.Scripts.Core.Environment {
         public int InitializationOrder => 2;
 
         private void Awake() {
+            if (instance != null && instance != this) {
+                Destroy(gameObject);
+                return;
+            }
+
+            instance = this;
             GameManager.instance?.Register(this as IInitializable);
         }
 
@@ -136,11 +135,7 @@ namespace Game.Scripts.Core.Environment {
         }
 
         private void UpdateTransitionEffects(float progress) {
-            switch (nextWeather) {
-                case WeatherType.AURORA:
 
-                    break;
-            }
         }
 
         private void StartWeatherTransition(WeatherType newWeather) {

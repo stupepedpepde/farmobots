@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Game.Scripts.Core;
+using Game.Scripts.Core.Environment;
 using Game.Scripts.Inventory;
 using Game.Scripts.Inventory.Items;
 using Game.Scripts.Plants;
@@ -177,7 +178,7 @@ namespace Game.Scripts.Planting {
                     if (currentHoveredPlantable != plantable) {
                         if (currentHoveredPlantable != null) {
                             HidePlantingIndicator();
-                            ClearIndicatorBlocks(); // Force reinit for new plantable
+                            ClearIndicatorBlocks();
                         }
                         currentHoveredPlantable = plantable;
                     }
@@ -289,6 +290,7 @@ namespace Game.Scripts.Planting {
             var ctx = pendingContext.Value;
             InventoryComponent inv = ctx.inventory;
 
+            // Re-validate target spot is still free
             if (ctx.targetSpot != null) {
                 if (ctx.targetSpot.isOccupied) {
                     Debug.Log($"Target spot {ctx.targetSpot.name} became occupied while choosing seed.");
@@ -307,6 +309,14 @@ namespace Game.Scripts.Planting {
                 return;
             }
 
+            // Check atmosphere requirements
+            if (AtmosphereManager.instance != null && !AtmosphereManager.instance.IsAtmosphereWithin(plantToGrow)) {
+                Debug.Log($"Cannot plant {plantToGrow.plantName}: atmosphere conditions not met.");
+                pendingContext = null;
+                return;
+            }
+
+            // Consume seed
             if (!inv.TryConsumeItem(selectedSeed, 1)) {
                 Debug.Log($"Failed to consume seed '{selectedSeed.details.ItemName}'. Not enough quantity.");
                 pendingContext = null;
@@ -325,6 +335,7 @@ namespace Game.Scripts.Planting {
                 lastPlantTime = Time.time;
                 ClearHoverIndicator(); // Refresh indicator after planting
             } else {
+                // Refund seed if planting failed
                 inv.TryAddItem(selectedSeed.details.Create(1));
                 Debug.Log($"Planting failed for {plantToGrow.plantName}, seed refunded.");
             }
@@ -408,6 +419,7 @@ namespace Game.Scripts.Planting {
 
         private bool PlantMultiTile(Plantable plantable, int startX, int startY, PlantSO plant) {
             int plantSize = plant.plantSize;
+            // First pass: ensure all required spots are free
             for (int x = 0; x < plantSize; x++) {
                 for (int y = 0; y < plantSize; y++) {
                     int checkX = startX + x;
@@ -418,6 +430,7 @@ namespace Game.Scripts.Planting {
                 }
             }
 
+            // Create the plant parent object
             GameObject plantParent = new GameObject(plant.plantName);
             plantParent.transform.SetParent(plantable.transform);
 
@@ -436,6 +449,7 @@ namespace Game.Scripts.Planting {
             Plant newPlant = plantParent.AddComponent<Plant>();
             newPlant.SetPlantSO(plant);
 
+            // Occupy all spots (sets isOccupied = true immediately)
             for (int x = 0; x < plantSize; x++) {
                 for (int y = 0; y < plantSize; y++) {
                     int checkX = startX + x;

@@ -30,8 +30,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0.7071058, z: -0, w: 0.7071078}
   m_LocalPosition: {x: -315.24716, y: 0, z: -70.70649}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 0.7, y: 0.7, z: 0.7}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
@@ -125,8 +125,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a29569b4070f40e1a81b51455bcbce2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Game.Scripts.Core.Environment.Terrain.Node.Node
+  nodeName: Titanium
   possibleDrops:
   - {fileID: 11400000, guid: d8a88e0013b2d4f40972824bb80fa664, type: 2}
   minQuantity: 1
   maxQuantity: 2
-  interactionRange: 10
+  miningTime: 10
+  isBuried: 1
+  revealRadius: 5
+  buriedVisualPrefab: {fileID: 604276600879813905, guid: b0060c3146149c340bc841835cc49af1, type: 3}
