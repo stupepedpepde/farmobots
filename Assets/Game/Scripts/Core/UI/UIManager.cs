@@ -14,6 +14,7 @@ namespace Game.Scripts.Core.UI {
         [SerializeField] private PanelSettings panelSettings;
         private VisualElement root;
 
+        private string currentOpenPopupId = null;
         private Dictionary<string, UIPopup> activePopups = new Dictionary<string, UIPopup>();
         private HashSet<UIPopup> registeredPopups = new HashSet<UIPopup>();
         private Stack<VisualElement> uiStack = new Stack<VisualElement>();
@@ -79,10 +80,27 @@ namespace Game.Scripts.Core.UI {
                 activePopups.Remove(id);
             }
 
-            var popup = UIPopup.Create(title, draggable, closable);
+            var popup = UIPopup.Create(title, draggable, closable, id);
             activePopups[id] = popup;
             RegisterPopup(popup);
             return popup;
+        }
+
+        public void TogglePopup(string id, UIPopup popup) {
+            if (currentOpenPopupId != null) {
+                if (currentOpenPopupId == id)
+                    ClosePopup(id);
+                else
+                    CloseAllPopups();
+
+                return;
+            }
+
+            if (!activePopups.ContainsKey(id)) {
+                activePopups[id] = popup;
+                RegisterPopup(popup);
+            }
+            ShowPopup(id);
         }
 
         public bool ShowPopup(string id) {
@@ -90,39 +108,10 @@ namespace Game.Scripts.Core.UI {
                 popup.Show(root);
                 uiStack.Push(popup.root);
                 SetUIState(true);
+                currentOpenPopupId = id;
                 return true;
             }
-
             return false;
-        }
-
-        public void TogglePopup(string id, string title = null, bool draggable = true, bool closable = true) {
-            if (activePopups.TryGetValue(id, out var existingPopup) && existingPopup.root.parent != null) {
-                ClosePopup(id);
-                return;
-            }
-
-            CloseAllPopups();
-
-            if (!activePopups.ContainsKey(id)) {
-                var popup = UIPopup.Create(title ?? id, draggable, closable);
-                activePopups[id] = popup;
-                RegisterPopup(popup);
-            }
-
-            ShowPopup(id);
-        }
-
-        public void TogglePopup(string id, UIPopup popup) {
-            if (activePopups.TryGetValue(id, out var existing) && existing.root.parent != null) {
-                ClosePopup(id);
-                return;
-            }
-
-            CloseAllPopups();
-            activePopups[id] = popup;
-            RegisterPopup(popup);
-            ShowPopup(id);
         }
 
         public bool ClosePopup(string id) {
@@ -130,16 +119,14 @@ namespace Game.Scripts.Core.UI {
                 popup.Close();
                 activePopups.Remove(id);
                 UnregisterPopup(popup);
-
                 if (uiStack.Count > 0 && uiStack.Peek() == popup.root)
                     uiStack.Pop();
-
                 if (uiStack.Count == 0)
                     SetUIState(false);
-
+                if (currentOpenPopupId == id)
+                    currentOpenPopupId = null;
                 return true;
             }
-
             return false;
         }
 
@@ -147,13 +134,12 @@ namespace Game.Scripts.Core.UI {
             foreach (var popup in activePopups.Values)
                 popup.Close();
             activePopups.Clear();
-
             foreach (var popup in registeredPopups)
                 popup.Close();
             registeredPopups.Clear();
-
             uiStack.Clear();
             SetUIState(false);
+            currentOpenPopupId = null;
         }
 
         #endregion
@@ -310,6 +296,7 @@ namespace Game.Scripts.Core.UI {
         #region Getters
 
         public VisualElement GetRoot() => root;
+        public bool IsAnyPopupOpen => currentOpenPopupId != null;
 
         #endregion
     }

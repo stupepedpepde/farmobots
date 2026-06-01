@@ -10,20 +10,22 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0b121d26c28f4e9e80912b5db5dfa46c, type: 3}
-  m_Name: big_growbed
+  m_Name: small_interior_growbed
   m_EditorClassIdentifier: Assembly-CSharp::Game.Scripts.Core.Building.BuildablePrefab
-  id: big_growbed
-  displayName: Big Growbed
+  id: small_growbed
+  displayName: Small Growbed
   prefabVariants:
-  - {fileID: 714993872254263325, guid: b5b480786213d364b86b0d7da7ac2325, type: 3}
+  - {fileID: 714993872254263325, guid: 405f52ebd9f069c4390fba3faacd9d4d, type: 3}
   category: 4
-  icon: {fileID: 21300000, guid: 8b31700cb648f024aaa47d6a1accb868, type: 3}
+  icon: {fileID: 21300000, guid: 45f519e50df2f2f46b740495cdb57d95, type: 3}
   placementOffset: {x: 0, y: 0, z: 0}
   placementRotation: {x: 0, y: 0, z: 0}
   connectionPointsLocal: []
   requirements:
   - requiredItem: {fileID: 11400000, guid: cf61004e49163454f934c533f07ab441, type: 2}
-    quantity: 2
+    quantity: 1
+  - requiredItem: {fileID: 11400000, guid: 1ddb4b15b940c6043adf7e7ff16b898b, type: 2}
+    quantity: 1
   - requiredItem: {fileID: 11400000, guid: 708e43441d2fe4541a2b88f5f225d67f, type: 2}
     quantity: 1
   isFurniture: 1

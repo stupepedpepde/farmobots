@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6194512530870569956}
   - component: {fileID: 5086781741580749583}
   - component: {fileID: 9141686201227285001}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SM_Transition_Long_A_Interior
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -101,7 +101,7 @@ GameObject:
   - component: {fileID: 7896008353294668983}
   - component: {fileID: 991821608743689268}
   - component: {fileID: 8115438450382532629}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SM_Left_Support_Long_A
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -190,7 +190,7 @@ GameObject:
   - component: {fileID: 3976144357401292319}
   - component: {fileID: 7823767483621487118}
   - component: {fileID: 227556349013269023}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SM_Right_Support_Long_A
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -280,7 +280,7 @@ GameObject:
   - component: {fileID: 5588846794867314764}
   - component: {fileID: 7668334688959030406}
   - component: {fileID: -6422452328447885056}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SM_Direct_Transition_Long_A
   m_TagString: Untagged
   m_Icon: {fileID: 0}

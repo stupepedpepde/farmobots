@@ -31,6 +31,9 @@ namespace Game.Scripts.Core.Environment.Terrain.Node
         private bool isMined = false;
         private bool isRevealed = false;
 
+        private GameObject highlightBoxInstance;
+        private float highlightEndTime;
+
         // Cached components
         private MeshRenderer[] renderers;
         private Collider interactionCollider;
@@ -158,7 +161,7 @@ namespace Game.Scripts.Core.Environment.Terrain.Node
             }
         }
 
-        private void Reveal()
+        public void Reveal()
         {
             if (isRevealed) return;
             isRevealed = true;
@@ -169,6 +172,95 @@ namespace Game.Scripts.Core.Environment.Terrain.Node
                 Destroy(buriedVisualInstance);
 
             Debug.Log($"Node '{nodeName}' revealed at {transform.position}");
+        }
+
+         public void Highlight(float duration)
+        {
+            if (highlightBoxInstance != null)
+                Destroy(highlightBoxInstance);
+
+            // Create an ESP wireframe box around the node's bounds
+            Bounds bounds = GetNodeBounds();
+            highlightBoxInstance = CreateWireframeBox(bounds, Color.red, duration);
+            highlightEndTime = Time.time + duration;
+        }
+
+        private Bounds GetNodeBounds()
+        {
+            Bounds totalBounds = new Bounds(transform.position, Vector3.zero);
+            bool hasBounds = false;
+
+            if (renderers != null && renderers.Length > 0)
+            {
+                foreach (var rend in renderers)
+                {
+                    if (rend != null)
+                    {
+                        if (!hasBounds)
+                            totalBounds = rend.bounds;
+                        else
+                            totalBounds.Encapsulate(rend.bounds);
+                        hasBounds = true;
+                    }
+                }
+            }
+
+            if (!hasBounds && TryGetComponent<Collider>(out var col))
+            {
+                totalBounds = col.bounds;
+                hasBounds = true;
+            }
+
+            if (!hasBounds)
+                totalBounds = new Bounds(transform.position, Vector3.one * 0.5f);
+
+            return totalBounds;
+        }
+
+        private GameObject CreateWireframeBox(Bounds bounds, Color color, float duration)
+        {
+            GameObject boxObj = new GameObject("NodeHighlightBox");
+            boxObj.transform.position = bounds.center;
+            boxObj.transform.rotation = Quaternion.identity;
+
+            Vector3 size = bounds.size;
+            var lr = boxObj.AddComponent<LineRenderer>();
+            lr.positionCount = 24; // 12 edges * 2 points each
+            lr.useWorldSpace = true;
+            lr.startWidth = 0.05f;
+            lr.endWidth = 0.05f;
+            lr.material = new Material(Shader.Find("Sprites/Default"));
+            lr.startColor = color;
+            lr.endColor = color;
+
+            Vector3[] corners = new Vector3[8];
+            corners[0] = new Vector3(-size.x, -size.y, -size.z) * 0.5f;
+            corners[1] = new Vector3( size.x, -size.y, -size.z) * 0.5f;
+            corners[2] = new Vector3( size.x, -size.y,  size.z) * 0.5f;
+            corners[3] = new Vector3(-size.x, -size.y,  size.z) * 0.5f;
+            corners[4] = new Vector3(-size.x,  size.y, -size.z) * 0.5f;
+            corners[5] = new Vector3( size.x,  size.y, -size.z) * 0.5f;
+            corners[6] = new Vector3( size.x,  size.y,  size.z) * 0.5f;
+            corners[7] = new Vector3(-size.x,  size.y,  size.z) * 0.5f;
+
+            // Define edges: pairs of corner indices
+            int[,] edges = new int[,] {
+                {0,1}, {1,2}, {2,3}, {3,0}, // bottom face
+                {4,5}, {5,6}, {6,7}, {7,4}, // top face
+                {0,4}, {1,5}, {2,6}, {3,7}  // vertical edges
+            };
+
+            Vector3[] points = new Vector3[24];
+            for (int i = 0; i < 12; i++)
+            {
+                points[i*2] = bounds.center + corners[edges[i,0]];
+                points[i*2+1] = bounds.center + corners[edges[i,1]];
+            }
+            lr.SetPositions(points);
+
+            // Auto-destroy after duration
+            Destroy(boxObj, duration);
+            return boxObj;
         }
 
         public void OnInteract()

@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1405236038857390108}
   - component: {fileID: 3775302858421505238}
   - component: {fileID: 2123681245928937502}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SM_Frame_Type_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -124,7 +124,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 31991085074208699}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: GameObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}

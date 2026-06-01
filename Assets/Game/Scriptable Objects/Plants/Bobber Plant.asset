@@ -19,8 +19,8 @@ MonoBehaviour:
   - {fileID: 3112954148815543370, guid: 0d059dfd241b7474b8506332d70124b0, type: 3}
   growthTime: 75
   oxygenMin: 5
-  oxygenMax: 14
-  carbonMin: 2
+  oxygenMax: 23
+  carbonMin: 0.4
   carbonMax: 5
   nitrogenMin: 30
   nitrogenMax: 70

@@ -13,7 +13,7 @@ namespace Game.Scripts.Core.Input {
     public class InputManager : MonoBehaviour, IInitializable, IUpdatable, IUnpausable {
         public static InputManager instance { get; private set; }
 
-        private InputActions inputActions;
+        public InputActions inputActions;
 
         public CharacterInput characterInput { get; private set; }
         public CameraInput cameraInput { get; private set; }
@@ -69,14 +69,22 @@ namespace Game.Scripts.Core.Input {
         }
 
         private void UpdateGeneral() {
-            if (inputActions.General.Pause.WasPressedThisFrame()) UIManager.instance?.ShowPauseMenu();
+            if (inputActions.General.Scan.WasPressedThisFrame()) {
+                GameEvents.TriggerScan();
+            }
+
+            if (inputActions.General.Pause.WasPressedThisFrame()) {
+                if (UIManager.instance != null && UIManager.instance.IsAnyPopupOpen)
+                    UIManager.instance.CloseAllPopups();
+                else
+                    UIManager.instance?.ShowPauseMenu();
+            }
 
             if (inputActions.General.Inventory.WasPressedThisFrame()) {
-                if (BuildingSystem.instance != null && BuildingSystem.instance.IsBuildModeActive) {
+                if (BuildingSystem.instance != null && BuildingSystem.instance.IsBuildModeActive)
                     GameEvents.RequestBuildingUI();
-                } else {
+                else
                     GameEvents.RequestInventory();
-                }
             }
 
             if (inputActions.PlayerActions.Interact.WasPressedThisFrame())

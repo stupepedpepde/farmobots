@@ -9,17 +9,20 @@ namespace Game.Scripts.Plants {
         private List<Plant> plants = new List<Plant>();
         public static PlantManager instance { get; private set; }
 
+        [SerializeField] private LayerMask roofLayerMask = 1 << 8;
+        public LayerMask RoofLayerMask => roofLayerMask;
+
         public int InitializationOrder => 4;
-        
+
         private void Awake() {
             if (instance != null && instance != this) {
                 Destroy(gameObject);
                 return;
             }
-    
+
             instance = this;
             DontDestroyOnLoad(gameObject);
-            
+
             GameManager.instance?.Register(this as IInitializable);
         }
 
@@ -42,7 +45,8 @@ namespace Game.Scripts.Plants {
                 var plant = plants[i];
                 plant.CheckPlant(deltaTime);
 
-                if (isRaining && plant.NeedsWater)
+                // Only water if raining, plant needs water, and is NOT sheltered
+                if (isRaining && plant.NeedsWater && !plant.IsSheltered)
                     plant.Water(rainWaterRate * deltaTime);
 
                 if (plant.IsGrown()) {
@@ -61,7 +65,6 @@ namespace Game.Scripts.Plants {
         }
 
         public void RegisterPlant(Plant plant) => plants.Add(plant);
-
         public void UnregisterPlant(Plant plant) => plants.Remove(plant);
     }
 }

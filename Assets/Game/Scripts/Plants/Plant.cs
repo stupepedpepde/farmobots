@@ -27,6 +27,11 @@ namespace Game.Scripts.Plants {
         // Reference to the spot this plant occupies
         private PlantableSpot occupiedSpot;
 
+        // Shelter from rain
+        private bool isSheltered;
+
+        public bool IsSheltered => isSheltered;
+
         public string GetInteractionPrompt() {
             if (IsGrown()) {
                 if (isExpired) return "Plant has died (no harvest)";
@@ -102,6 +107,8 @@ namespace Game.Scripts.Plants {
                 if (plant.GetPlantByStage(currentStage) != null)
                     currentPlant = Instantiate(plant.GetPlantByStage(currentStage), transform);
             }
+
+            CheckIfSheltered();
         }
 
         private void OnDestroy() {
@@ -191,6 +198,17 @@ namespace Game.Scripts.Plants {
 
         public float GetHarvestTime() => plant != null ? plant.harvestTime : 1.5f;
         public List<HarvestDrop> GetHarvestDrops() => plant != null ? plant.harvestDrops : new List<HarvestDrop>();
+
+        private void CheckIfSheltered() {
+            if (PlantManager.instance == null) return;
+            Vector3 origin = transform.position + Vector3.up * 0.1f;
+            if (Physics.Raycast(origin, Vector3.up, out RaycastHit hit, 100f, PlantManager.instance.RoofLayerMask)) {
+                isSheltered = true;
+                Debug.Log($"{name} is sheltered by {hit.collider.name}");
+            } else {
+                isSheltered = false;
+            }
+        }
 
         private void Harvest() {
             if (isExpired) {

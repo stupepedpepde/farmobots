@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2926080135334706492}
   - component: {fileID: 1116735651923053046}
   - component: {fileID: 6628680536633181089}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SM_Transition_X
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -125,7 +125,7 @@ GameObject:
   - component: {fileID: 2532788304145159858}
   - component: {fileID: 6079036053683539051}
   - component: {fileID: 3127592850090376081}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SM_Transition_X_Interior
   m_TagString: Untagged
   m_Icon: {fileID: 0}

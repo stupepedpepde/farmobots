@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4381555281514116593}
   - component: {fileID: 3852344374095379611}
   - component: {fileID: 2299659745680763968}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SM_Left_Support_T_A
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -101,7 +101,7 @@ GameObject:
   - component: {fileID: 6266887622031208613}
   - component: {fileID: 8150532771583263855}
   - component: {fileID: 4109056960603317370}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SM_Transition_T_A
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -215,7 +215,7 @@ GameObject:
   - component: {fileID: 4785177018865757861}
   - component: {fileID: 4553140981299878656}
   - component: {fileID: 5890798976764232170}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SM_Transition_T_A._Interior
   m_TagString: Untagged
   m_Icon: {fileID: 0}

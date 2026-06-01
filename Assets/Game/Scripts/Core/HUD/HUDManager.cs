@@ -2,8 +2,11 @@
 using UnityEngine.UIElements;
 using Game.Scripts.Core;
 using Game.Scripts.Core.Environment;
+using Game.Scripts.Core.Input;
 using Game.Scripts.Core.UI;
 using Game.Scripts.Plants;
+using Game.Scripts.Player;
+using UnityEngine.InputSystem;
 
 namespace Game.Scripts.Core.HUD {
     public class HUDManager : MonoBehaviour, IInitializable, IUpdatable {
@@ -38,6 +41,10 @@ namespace Game.Scripts.Core.HUD {
         private VisualElement waterBarBg;
         private VisualElement waterBarFill;
         private IInteractable currentInteractable;
+
+        // Cooldown display
+        private Label scanCooldownLabel;
+        private VisualElement scanCooldownContainer;
 
         public int InitializationOrder => 100;
 
@@ -269,6 +276,35 @@ namespace Game.Scripts.Core.HUD {
                 .WithBorderRadius(4, 0, 0, 4)
                 .Build();
 
+            // === Scan Cooldown Panel (bottom right) ===
+            scanCooldownContainer = UIBuilder.CreateContainer()
+                .WithName("scan-cooldown-container")
+                .WithPosition(UIPosition.ABSOLUTE)
+                .Anchor(UIAnchor.BOTTOM_RIGHT)
+                .WithMargins(0, 20, 20, 0)
+                .WithBackgroundColor(new Color(0, 0, 0, 0.6f))
+                .WithPaddings(10, 15)
+                .WithBorders(2, Color.gray, 8)
+                .WithFlexDirection(FlexDirection.Row)
+                .WithAlignItems(Align.Center)
+                .Build();
+
+            string scanKey = "";
+            if (InputManager.instance != null && InputManager.instance.inputActions != null)
+                scanKey = InputManager.instance.inputActions.General.Scan.GetBindingDisplayString();
+            else
+                scanKey = "F";
+
+            scanCooldownLabel = UIBuilder.CreateLabel()
+                .WithText($"{scanKey} Scan - Ready")
+                .WithColor(Color.white)
+                .WithFontSize(16)
+                .WithFontStyle(FontStyle.Bold)
+                .Build<Label>();
+
+            scanCooldownContainer.Add(scanCooldownLabel);
+            root.Add(scanCooldownContainer);
+
             waterBarBg.Add(waterBarFill);
             interactionProgressContainer.Add(waterLabel);
             interactionProgressContainer.Add(waterBarBg);
@@ -340,6 +376,14 @@ namespace Game.Scripts.Core.HUD {
                 waterBarFill.style.width = new Length(widthPercent, LengthUnit.Percent);
                 waterBarFill.style.backgroundColor = percent < 0.3f ? Color.red : Color.cyan;
                 interactionProgressContainer.style.display = DisplayStyle.Flex;
+            } else if (interactable is Collector.Collector collector) {
+                float fillPercent = collector.GetFillPercentage();
+                int flasks = collector.GetAvailableFlasks();
+                waterLabel.text = $"Water: {collector.GetCurrentWater():F0}/{collector.GetMaxWater():F0} ({fillPercent * 100:F0}%)\n{flasks} flask(s) ready";
+                float widthPercent = Mathf.Clamp01(fillPercent) * 100f;
+                waterBarFill.style.width = new Length(widthPercent, LengthUnit.Percent);
+                waterBarFill.style.backgroundColor = fillPercent > 0.8f ? Color.green : Color.cyan;
+                interactionProgressContainer.style.display = DisplayStyle.Flex;
             } else {
                 interactionProgressContainer.style.display = DisplayStyle.None;
             }
@@ -363,6 +407,40 @@ namespace Game.Scripts.Core.HUD {
                     waterBarFill.style.width = new Length(widthPercent, LengthUnit.Percent);
                     waterBarFill.style.backgroundColor = percent < 0.3f ? Color.red : Color.cyan;
                     interactionActionLabel.text = plant.GetInteractionPrompt();
+                } else if (currentInteractable is Collector.Collector collector) {
+                    float fillPercent = collector.GetFillPercentage();
+                    int flasks = collector.GetAvailableFlasks();
+                    waterLabel.text = $"Water: {collector.GetCurrentWater():F0}/{collector.GetMaxWater():F0} ({fillPercent * 100:F0}%)\n{flasks} flask(s) ready";
+                    float widthPercent = Mathf.Clamp01(fillPercent) * 100f;
+                    waterBarFill.style.width = new Length(widthPercent, LengthUnit.Percent);
+                    waterBarFill.style.backgroundColor = fillPercent > 0.8f ? Color.green : Color.cyan;
+                    interactionActionLabel.text = collector.GetInteractionPrompt();
+                }
+            }
+
+            if (scanCooldownLabel != null && scanCooldownContainer != null)
+            {
+                PlayerScanner scanner = FindObjectOfType<PlayerScanner>();
+                if (scanner != null)
+                {
+                    float remaining = scanner.CooldownRemaining;
+                    string key = "";
+                    if (InputManager.instance?.inputActions != null)
+                        key = InputManager.instance.inputActions.General.Scan.GetBindingDisplayString();
+                    else
+                        key = "F";
+
+                    if (remaining <= 0f)
+                        scanCooldownLabel.text = $"[{key}] Scan - Ready";
+                    else
+                        scanCooldownLabel.text = $"[{key}] Scan - {remaining:F1}s";
+
+                    // Optional: change color when on cooldown
+                    scanCooldownLabel.style.color = remaining > 0f ? new Color(1f, 0.5f, 0.2f) : Color.white;
+                }
+                else
+                {
+                    scanCooldownLabel.text = "Scan - Unavailable";
                 }
             }
         }

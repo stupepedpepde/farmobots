@@ -25,6 +25,8 @@ namespace Game.Scripts.Core {
         private static Func<Vector3> playerPositionProvider;
         private static Func<Quaternion> playerRotationProvider;
 
+        public static event Action OnScanTriggered;
+
         // inventory
         public static event Action<InventoryComponent> OnInventoryRequested;
 
@@ -80,6 +82,8 @@ namespace Game.Scripts.Core {
 
             return Quaternion.identity;
         }
+
+        public static void TriggerScan() => OnScanTriggered?.Invoke();
 
         # endregion
 

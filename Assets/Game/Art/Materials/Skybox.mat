@@ -189,7 +189,7 @@ Material:
     - _HorizonColor: {r: 0.4305358, g: 0.58672017, b: 0.7075472, a: 1}
     - _Horizon_Clouds_Fade: {r: 0.05, g: 1, b: 0, a: 0}
     - _Horizon_Color_Night: {r: 0.2884178, g: 0, b: 1, a: 0}
-    - _MainLightDirection: {r: 0.15366526, g: -0.46573874, b: -0.87147856, a: 0}
+    - _MainLightDirection: {r: 0.15104555, g: -0.49334097, b: -0.8566214, a: 0}
     - _Moon_Offset: {r: 0, g: 0, b: 0, a: 0}
     - _Moon_Stars_Col: {r: 1, g: 1, b: 1, a: 0}
     - _NightGroundColor: {r: 0.01931292, g: 0.040455878, b: 0.13207546, a: 1}

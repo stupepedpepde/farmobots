@@ -10,7 +10,8 @@ using UnityEngine.UIElements;
 
 namespace Game.Scripts.Planting {
     public class SeedSelectionPopup {
-        private string popupId;
+        private const string POPUP_ID = "seed_selection";
+
         private UIPopup popup;
         private Action<Item> onSeedSelected;
 
@@ -21,13 +22,11 @@ namespace Game.Scripts.Planting {
 
         private void Build(InventoryComponent inventory, Action<Item> onSelected) {
             onSeedSelected = onSelected;
-            popupId = $"seed_selection_{Guid.NewGuid()}";
 
-            popup = UIManager.instance.CreatePopup(popupId, "Select Seed", draggable: true, closable: true)
+            popup = UIManager.instance.CreatePopup(POPUP_ID, "Select Seed", draggable: true, closable: true)
                 .SetSize(600, 700)
                 .OnClose(() => {
                     onSeedSelected?.Invoke(null);
-                    UIManager.instance.UnregisterPopup(popup);
                 });
 
             var mainContainer = UIBuilder.CreateContainer()
@@ -138,7 +137,7 @@ namespace Game.Scripts.Planting {
             }
 
             popup.SetContent(mainContainer);
-            popup.Show();
+            UIManager.instance.TogglePopup(POPUP_ID, popup);
         }
     }
 }

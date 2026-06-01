@@ -286,7 +286,7 @@ namespace Game.Scripts.Robot {
 
         private void OnDayStageChanged(DayStage newStage) {
             if (flashlightLight == null) return;
-            bool shouldBeOn = true;
+            bool shouldBeOn = newStage == DayStage.DAWN || newStage == DayStage.NIGHT;
             Debug.Log($"flashlight {shouldBeOn}");
             flashlightLight.enabled = shouldBeOn;
         }

@@ -11,15 +11,25 @@ namespace Game.Scripts.Core.UI {
         public Label titleLabel { get; private set; }
         public Button closeButton { get; private set; }
 
+        private string popupId;
+        public string Id {
+            get => popupId;
+            set => popupId = value;
+        }
+
         private bool isDraggable;
         private bool isDragging;
         private Vector2 dragStart;
         private Vector2 elementStart;
         private Action onClose;
 
-        public static UIPopup Create(string title, bool draggable = true, bool closable = true) {
+        private bool isClosing = false;
+
+        public static UIPopup Create(string title, bool draggable = true, bool closable = true, string id = null) {
             var popup = new UIPopup();
+            popup.Id = id;
             popup.Build(title, draggable, closable);
+
             return popup;
         }
 
@@ -76,9 +86,13 @@ namespace Game.Scripts.Core.UI {
                     .WithColor(Color.white)
                     .WithFontSize(24)
                     .WithBorders(2, new Color(0.5f, 0.5f, 0.5f), 15)
-                    .OnClick(() => Close())
+                    .OnClick(() => {
+                        if (!string.IsNullOrEmpty(Id) && UIManager.instance != null)
+                            UIManager.instance.ClosePopup(Id);
+                        else
+                            Close();
+                    })
                     .Build<Button>();
-
                 header.Add(closeButton);
             }
 
@@ -173,11 +187,17 @@ namespace Game.Scripts.Core.UI {
         }
 
         public void Close() {
+            if (isClosing) return;
+            isClosing = true;
+
+            if (!string.IsNullOrEmpty(Id) && UIManager.instance != null && UIManager.instance.IsAnyPopupOpen)
+                UIManager.instance.ClosePopup(Id);
+
             Cursor.lockState = CursorLockMode.Locked;
             GameManager.instance?.SetGameState(GameState.PLAYING);
-
             onClose?.Invoke();
             root?.RemoveFromHierarchy();
+            isClosing = false;
         }
     }
 }

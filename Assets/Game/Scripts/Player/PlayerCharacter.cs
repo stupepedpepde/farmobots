@@ -60,6 +60,10 @@ namespace Game.Scripts.Player {
         public void Initialize() {
             stance = Stance.STAND;
             isCrouched = false;
+
+            if (GetComponent<PlayerScanner>() == null)
+                gameObject.AddComponent<PlayerScanner>();
+
             motor.CharacterController = this;
             motor.SetCapsuleDimensions(radius: motor.Capsule.radius, height: standHeight, yOffset: standHeight * 0.5f);
             uncrouchOverlapResults = new Collider[8];

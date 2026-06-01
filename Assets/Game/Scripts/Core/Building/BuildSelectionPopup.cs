@@ -136,6 +136,7 @@ namespace Game.Scripts.Core.Building {
             var prefabs = BuildingSystem.instance.BuildablePrefabs;
             var categories = prefabs.Select(p => p.category).Distinct().OrderBy(c => c.ToString()).ToList();
 
+            // Add ALL tab
             CreateCategoryTab(container, BuildCategory.ALL, true);
             foreach (var cat in categories)
                 CreateCategoryTab(container, cat, false);
@@ -155,6 +156,8 @@ namespace Game.Scripts.Core.Building {
                 .OnClick(() => SetCategory(category))
                 .Build<Button>();
 
+            // Store the category in userData for later reference
+            tab.userData = category;
             parent.Add(tab);
             categoryTabs.Add(tab);
         }
@@ -162,8 +165,10 @@ namespace Game.Scripts.Core.Building {
         private void SetCategory(BuildCategory category) {
             if (currentCategory == category) return;
             currentCategory = category;
+
+            // Update tab colors
             foreach (var tab in categoryTabs) {
-                var tabCategory = (BuildCategory)Enum.Parse(typeof(BuildCategory), tab.text);
+                var tabCategory = (BuildCategory)tab.userData;
                 tab.style.backgroundColor = tabCategory == category ? categoryTabSelected : categoryTabNormal;
             }
 
@@ -255,6 +260,7 @@ namespace Game.Scripts.Core.Building {
             slot.Add(nameLabel);
             slot.Add(costLabel);
 
+            // Click selection
             slot.RegisterCallback<ClickEvent>(evt => {
                 if (selectedIndex != index) {
                     ClearSelection();
@@ -262,8 +268,10 @@ namespace Game.Scripts.Core.Building {
                     slot.style.backgroundColor = slotSelected;
                     UpdatePreview(prefab);
                 }
+                evt.StopPropagation();
             });
 
+            // Double-click handling
             slot.RegisterCallback<PointerDownEvent>(evt => {
                 if (evt.button != 0) return;
                 float now = Time.realtimeSinceStartup;
@@ -272,6 +280,7 @@ namespace Game.Scripts.Core.Building {
                 lastClickTime = now;
             });
 
+            // Hover – only if not selected
             slot.RegisterCallback<PointerEnterEvent>(evt => {
                 if (selectedIndex != index)
                     slot.style.backgroundColor = slotHover;
@@ -287,8 +296,10 @@ namespace Game.Scripts.Core.Building {
         }
 
         private void ClearSelection() {
-            if (selectedIndex >= 0 && selectedIndex < slots.Count)
-                slots[selectedIndex].style.backgroundColor = slotNormal;
+            if (selectedIndex >= 0 && selectedIndex < slots.Count) {
+                var previouslySelected = slots[selectedIndex];
+                previouslySelected.style.backgroundColor = slotNormal;
+            }
             selectedIndex = -1;
         }
 

@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3398559298246408240}
   - component: {fileID: 4567141403389477262}
   - component: {fileID: 3678201153249660017}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SM_Door_Right_For_Type_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -102,7 +102,7 @@ GameObject:
   - component: {fileID: 2266872604663279071}
   - component: {fileID: 4076175298043058453}
   - component: {fileID: 4922821516514905321}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SM_Door_For_Type_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -216,7 +216,7 @@ GameObject:
   - component: {fileID: 6325478308459093500}
   - component: {fileID: 8575566398206035096}
   - component: {fileID: 9149622602557517911}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SM_Door_Left_For_Type_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
