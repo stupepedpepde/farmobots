@@ -418,32 +418,29 @@ namespace Game.Scripts.Robot {
             if (plant == null) return false;
             if (!plant.NeedsWater) return false;
 
-            // Check if robot has ice in inventory
             InventoryComponent inv = inventory.GetInventoryComponent();
             if (inv == null) return false;
 
-            Item ice = GetIceFromInventory(inv);
-            if (ice == null || ice.quantity < 1) {
-                Debug.LogWarning($"{name} has no ice to water the plant.");
+            Item water = GetWaterFromInventory(inv);
+            if (water == null || water.quantity < 1) {
+                Debug.LogWarning($"{name} has no water to water the plant.");
                 return false;
             }
 
-            // Consume one ice
-            if (!inv.TryConsumeItem(ice, 1)) {
-                Debug.LogWarning($"{name} failed to consume ice.");
+            if (!inv.TryConsumeItem(water, 1)) {
+                Debug.LogWarning($"{name} failed to consume water.");
                 return false;
             }
 
-            // Water the plant fully
-            plant.Water(plant.GetMaxWater());
-            Debug.Log($"{name} watered {plant.name} using ice.");
+            plant.Water(100);
+            Debug.Log($"{name} watered {plant.name} using water.");
             return true;
         }
 
-        private Item GetIceFromInventory(InventoryComponent inv) {
+        private Item GetWaterFromInventory(InventoryComponent inv) {
             for (int i = 0; i < inv.GetCapacity(); i++) {
                 Item item = inv.GetItem(i);
-                if (item != null && item.details.ItemName.ToLower() == "ice") {
+                if (item != null && item.details.ItemName.ToLower() == "water") {
                     return item;
                 }
             }
@@ -510,9 +507,9 @@ namespace Game.Scripts.Robot {
                 case RobotType.GARDENER:
                     InventoryComponent inv = inventory.GetInventoryComponent();
                     if (inv == null) break;
-                    Item ice = GetIceFromInventory(inv);
-                    if (ice == null || ice.quantity < 1) {
-                        Debug.Log($"{name} has no ice, cannot water.");
+                    Item water = GetWaterFromInventory(inv);
+                    if (water == null || water.quantity < 1) {
+                        Debug.Log($"{name} has no water, cannot water.");
                         break;
                     }
 

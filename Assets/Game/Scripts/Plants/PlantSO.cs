@@ -24,18 +24,23 @@ namespace Game.Scripts.Plants {
         [Range(0, 100)] public float nitrogenMin = 30f;
         [Range(0, 100)] public float nitrogenMax = 50f;
         [Space]
-        [Header("Oxygen & Carbon Exchange")]
+        [Header("Oxygen & Carbon Exchange (continuous)")]
         public float oxygenProduction = 0.01f;
         public float carbonConsumption = 0.005f;
+        [Space]
+        [Header("Harvest Burst")]
+        public float harvestOxygenBoost = 0.5f;
+        public float harvestCarbonReduction = 0.2f;
         [Space]
         [Header("Planting / Harvest")]
         public float plantingTime = 2.0f;
         public float harvestTime = 1.5f;
+        public float harvestExpiryTime = 30f;
         [Space]
         [Header("Watering")]
         public bool requiresWatering = true;
         public float maxWater = 100f;
-        public float waterDrainRate = 1f; // per second (new)
+        public float waterDrainRate = 1f;
         [Space]
         [Header("Size & Placement")]
         [Range(1, 5)] public int plantSize = 1;

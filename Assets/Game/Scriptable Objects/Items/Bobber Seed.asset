@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1652fed184884bdda9057fe504ec6f95, type: 3}
+  m_Name: Bobber Seed
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Scripts.Inventory.Items.ItemDetails
+  itemName: Bobber Seed
+  icon: {fileID: 21300000, guid: 9cf9ac8a644138c45ac969768e43c2ad, type: 3}
+  maxStack: 20
+  description: Used to plant a bobber
+  isSeed: 1
+  previewPrefab: {fileID: 1125090915475188105, guid: f55f37e899286724c847cbe8ce22fbff, type: 3}
+  plantsToGrow: {fileID: 11400000, guid: 50560a99ca92d13478e9ed3a23a89e5c, type: 2}

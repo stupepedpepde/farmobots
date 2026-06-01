@@ -18,18 +18,24 @@ MonoBehaviour:
   - {fileID: 6662402449739863849, guid: b5d7b791262317c4aaffa7dcf8d8c569, type: 3}
   growthTime: 50
   oxygenMin: 0
-  oxygenMax: 4
-  carbonMin: 2
-  carbonMax: 5
+  oxygenMax: 5
+  carbonMin: 5
+  carbonMax: 10
   nitrogenMin: 30
   nitrogenMax: 80
   oxygenProduction: 0.02
   carbonConsumption: 0.01
+  harvestOxygenBoost: 0.3
+  harvestCarbonReduction: 0.1
   plantingTime: 5
   harvestTime: 4
+  harvestExpiryTime: 60
   requiresWatering: 1
   maxWater: 200
   waterDrainRate: 0.5
   plantSize: 1
   footprintOffset: {x: 0, y: 0}
-  harvestDrops: []
+  harvestDrops:
+  - itemDetails: {fileID: 11400000, guid: 64392fed3212d114aa43cc326e7b76b6, type: 2}
+    minQuantity: 1
+    maxQuantity: 1

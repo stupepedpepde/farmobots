@@ -6,7 +6,6 @@ namespace Game.Scripts.Planting {
     public class PlantableSpot : MonoBehaviour {
         public bool isOccupied { get; private set; }
         public Plant currentPlant { get; private set; }
-
         private Plant multiTilePlantOwner;
 
         public bool TryPlant(PlantSO plantSO) {
@@ -19,10 +18,12 @@ namespace Game.Scripts.Planting {
 
             Plant plant = plantObject.AddComponent<Plant>();
             plant.SetPlantSO(plantSO);
-            
+            plant.SetOccupiedSpot(this); // Link the spot
+
             plant.Initialize();
             isOccupied = true;
             currentPlant = plant;
+            multiTilePlantOwner = plant; // So Clear works
 
             return true;
         }
@@ -33,14 +34,16 @@ namespace Game.Scripts.Planting {
             isOccupied = true;
             currentPlant = plant;
             multiTilePlantOwner = plant;
+            plant.SetOccupiedSpot(this); // Link the spot
         }
 
         public void Clear() {
             if (currentPlant != null && multiTilePlantOwner != null) {
                 if (currentPlant.transform.parent == transform)
                     Destroy(currentPlant.gameObject);
-            } else if (currentPlant != null)
+            } else if (currentPlant != null) {
                 Destroy(currentPlant.gameObject);
+            }
 
             isOccupied = false;
             currentPlant = null;

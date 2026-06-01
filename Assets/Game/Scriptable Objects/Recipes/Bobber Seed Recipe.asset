@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 12915f13681a43d4b16948d7d482c194, type: 3}
+  m_Name: Bobber Seed Recipe
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Scripts.Inventory.CraftingRecipe
+  displayName: Bobber Seed Recipe
+  icon: {fileID: 21300000, guid: 9cf9ac8a644138c45ac969768e43c2ad, type: 3}
+  inputs:
+  - item: {fileID: 11400000, guid: 64392fed3212d114aa43cc326e7b76b6, type: 2}
+    quantity: 2
+  - item: {fileID: 11400000, guid: c9f9a71966ab74840858a55872af88ca, type: 2}
+    quantity: 2
+  - item: {fileID: 11400000, guid: 708e43441d2fe4541a2b88f5f225d67f, type: 2}
+    quantity: 1
+  outputs:
+  - item: {fileID: 11400000, guid: 37dd148b52d0499489c983c3092917a8, type: 2}
+    quantity: 1

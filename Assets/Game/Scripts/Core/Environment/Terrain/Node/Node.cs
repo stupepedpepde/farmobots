@@ -7,7 +7,7 @@ using Random = UnityEngine.Random;
 
 namespace Game.Scripts.Core.Environment.Terrain.Node
 {
-    public class Node : MonoBehaviour, IInteractable
+    public class Node : MonoBehaviour, IInteractable, IUpdatable
     {
         [SerializeField] private string nodeName = "Node";
         public NodeType nodeType { get; private set; }
@@ -47,6 +47,7 @@ namespace Game.Scripts.Core.Environment.Terrain.Node
         private void Awake()
         {
             GameManager.instance?.Register(this as IInteractable);
+            GameManager.instance?.Register(this as IUpdatable);
             RobotManager.instance?.RegisterNode(this);
 
             // Cache renderers and interaction collider
@@ -119,22 +120,41 @@ namespace Game.Scripts.Core.Environment.Terrain.Node
                 interactionCollider.enabled = visible;
         }
 
-        private void Update()
+        public void OnUpdate(float deltaTime)
         {
             // Only check proximity if buried and not yet revealed
             if (!isBuried || isRevealed) return;
 
-            // Throttle checks to every 0.2 seconds (adjust as needed)
+            // Throttle checks to every 0.2 seconds
             if (Time.time < nextProximityCheckTime) return;
             nextProximityCheckTime = Time.time + 0.2f;
 
+            // 1. Check player
             Vector3 playerPos = GameEvents.GetPlayerPosition();
-            if (playerPos == Vector3.zero) return;
-
-            float sqrDist = (transform.position - playerPos).sqrMagnitude;
-            if (sqrDist <= revealRadius * revealRadius)
+            if (playerPos != Vector3.zero)
             {
-                Reveal();
+                float sqrDistToPlayer = (transform.position - playerPos).sqrMagnitude;
+                if (sqrDistToPlayer <= revealRadius * revealRadius)
+                {
+                    Reveal();
+                    return;
+                }
+            }
+
+            // 2. Check robots
+            if (RobotManager.instance != null)
+            {
+                var robots = RobotManager.instance.GetRobots();
+                foreach (var robot in robots)
+                {
+                    if (robot == null) continue;
+                    float sqrDistToRobot = (transform.position - robot.transform.position).sqrMagnitude;
+                    if (sqrDistToRobot <= revealRadius * revealRadius)
+                    {
+                        Reveal();
+                        return;
+                    }
+                }
             }
         }
 

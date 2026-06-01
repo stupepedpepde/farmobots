@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1652fed184884bdda9057fe504ec6f95, type: 3}
-  m_Name: Test
+  m_Name: Wood
   m_EditorClassIdentifier: Assembly-CSharp::Game.Scripts.Inventory.Items.ItemDetails
-  itemName: Test
-  icon: {fileID: 21300000, guid: 042cc2e513389414b9abeb8eb592e388, type: 3}
+  itemName: Wood
+  icon: {fileID: 21300000, guid: 888d329cba1d94648a53c019acb0081a, type: 3}
   maxStack: 20
-  description: version
-  isSeed: 1
-  previewPrefab: {fileID: 100000, guid: b4faa2141c16dce4ca0958f3035745cd, type: 3}
-  plantsToGrow: {fileID: 11400000, guid: 50560a99ca92d13478e9ed3a23a89e5c, type: 2}
+  description: Natural material
+  isSeed: 0
+  previewPrefab: {fileID: 100000, guid: 07082429df5193f4195fac6ae21ced70, type: 3}
+  plantsToGrow: {fileID: 0}

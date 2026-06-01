@@ -10,17 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6f4aae43d4f7414591e054531960f7b3, type: 3}
-  m_Name: Cobalt
+  m_Name: Wood
   m_EditorClassIdentifier: Assembly-CSharp::Game.Scripts.Core.Environment.Terrain.Node.NodeType
-  prefab: {fileID: 7182886151334018068, guid: 9c8be644eae0b7e438d698ce87f84fbe, type: 3}
+  prefab: {fileID: 1036972651222626086, guid: fc0b5b8e31e5b78479157702ba2088c7, type: 3}
   possibleDrops:
-  - {fileID: 11400000, guid: dedd45268cc0e844480c54b207b3a9f7, type: 2}
-  minQuantity: 1
-  maxQuantity: 3
-  miningTime: 60
+  - {fileID: 11400000, guid: 1ddb4b15b940c6043adf7e7ff16b898b, type: 2}
+  minQuantity: 0
+  maxQuantity: 1
+  miningTime: 20
   minHeight: 0
   maxHeight: 0
-  minDistanceFromSameType: 40
+  minDistanceFromSameType: 20
   isBuried: 0
   revealRadius: 5
   buriedVisualPrefab: {fileID: 0}

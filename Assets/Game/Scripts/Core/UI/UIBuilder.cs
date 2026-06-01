@@ -252,6 +252,21 @@ namespace Game.Scripts.Core.UI {
             return this;
         }
 
+        public UIBuilder WithOverflow(Overflow overflow) {
+            element.style.overflow = overflow;
+            return this;
+        }
+
+        public UIBuilder WithMaxHeight(StyleLength maxHeight) {
+            element.style.maxHeight = maxHeight;
+            return this;
+        }
+
+        public UIBuilder WithMaxWidth(StyleLength maxWidth) {
+            element.style.maxWidth = maxWidth;
+            return this;
+        }
+
         #endregion
 
         #region Type-Specific Methods (Safe casting)

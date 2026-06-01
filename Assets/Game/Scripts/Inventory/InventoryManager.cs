@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using Game.Scripts.Core;
+using Game.Scripts.Core.Building.Buildings;
 using JetBrains.Annotations;
 using UnityEngine;
 
@@ -77,6 +79,28 @@ namespace Game.Scripts.Inventory {
             if (inventoryPopup == null)
                 inventoryPopup = new InventoryPopup();
 
+            inventoryPopup.DisplayInventories(primaryInventory, secondaryInventory);
+            inventoryPopup.Show();
+            isInventoryOpen = inventoryPopup.IsOpen;
+
+            if (isInventoryOpen)
+                OnInventoryOpened?.Invoke();
+            else
+                OnInventoryClosed?.Invoke();
+        }
+
+        public void ShowCraftingInventory(InventoryComponent playerInventory, LabTable labTable)
+        {
+            if (playerInventory == null || labTable == null) return;
+
+            currentMode = InventoryMode.CRAFTING;
+            primaryInventory = playerInventory;
+            secondaryInventory = labTable.CraftingInventory; // crafting grid inventory
+
+            if (inventoryPopup == null)
+                inventoryPopup = new InventoryPopup();
+
+            inventoryPopup.SetCraftingData(labTable.Recipes, labTable.CraftingInventory);
             inventoryPopup.DisplayInventories(primaryInventory, secondaryInventory);
             inventoryPopup.Show();
             isInventoryOpen = inventoryPopup.IsOpen;

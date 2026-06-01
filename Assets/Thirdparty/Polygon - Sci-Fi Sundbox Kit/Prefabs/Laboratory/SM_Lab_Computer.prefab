@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 84000915308968842}
   - component: {fileID: 3928746319925179439}
   - component: {fileID: 1252355561670017253}
+  - component: {fileID: 2669392932613416096}
   m_Layer: 0
   m_Name: SM_Lab_Computer
   m_TagString: Untagged
@@ -90,3 +91,25 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &2669392932613416096
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 748088812466086192}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85b77751f24c4ce28e4995156f5b376f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Scripts.Core.Building.Buildings.LabTable
+  tableName: Lab Table
+  interactionRange: 2.5
+  craftingInventory: {fileID: 0}
+  craftingInventorySize: 3
+  availableRecipes:
+  - {fileID: 11400000, guid: bb632db5ee6ccf44780db1d5280ba5ce, type: 2}
+  - {fileID: 11400000, guid: ec089243be1b954449f09559be1ec4cb, type: 2}
+  - {fileID: 11400000, guid: 75289a987bcf0124e81104c083d61b4a, type: 2}
+  - {fileID: 11400000, guid: 86673b67fe695db488ec3e7459b72cbb, type: 2}
+  - {fileID: 11400000, guid: 76c3695c01c472248811ea2353e5de9a, type: 2}
