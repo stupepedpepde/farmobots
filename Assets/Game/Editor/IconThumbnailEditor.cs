@@ -44,6 +44,7 @@ namespace Game.Editor {
         private Camera m_sceneCamera;
         private GameObject m_instance;
         private List<GameObject> m_connectionPointHelpers = new List<GameObject>();
+        private List<GameObject> m_furniturePointHelpers = new List<GameObject>();
         private Texture2D m_previewTexture;
         private int m_size = 512;
 
@@ -65,7 +66,6 @@ namespace Game.Editor {
             m_itemsToggle = new ToolbarToggle() { text = "Items", value = false };
             toolbar.Add(m_buildingsToggle);
             toolbar.Add(m_itemsToggle);
-            // Insert at top of root (or add to an existing toolbar container)
             rootVisualElement.Insert(0, toolbar);
 
             m_buildingsToggle.RegisterValueChangedCallback(evt => {
@@ -203,7 +203,7 @@ namespace Game.Editor {
             m_instance.transform.position = Vector3.zero;
             m_instance.transform.rotation = Quaternion.Euler(0, m_objectRotationField.value, 0);
 
-            UpdateConnectionPointVisuals();
+            UpdateSnapPointVisuals();
             UpdateCamera();
         }
 
@@ -223,10 +223,13 @@ namespace Game.Editor {
             m_instance.transform.position = Vector3.zero;
             m_instance.transform.rotation = Quaternion.Euler(0, m_objectRotationField.value, 0);
 
-            // Clear any connection point helpers (not used for items)
+            // Clear any snap point helpers (not used for items)
             foreach (var helper in m_connectionPointHelpers)
                 if (helper != null) DestroyImmediate(helper);
             m_connectionPointHelpers.Clear();
+            foreach (var helper in m_furniturePointHelpers)
+                if (helper != null) DestroyImmediate(helper);
+            m_furniturePointHelpers.Clear();
 
             UpdateCamera();
         }
@@ -268,39 +271,52 @@ namespace Game.Editor {
             }
 
             if (m_currentMode == AssetMode.Buildings) {
-                Button refreshPointsBtn = new Button(() => UpdateConnectionPointVisuals());
-                refreshPointsBtn.text = "Refresh Snapping Points Visuals";
+                Button refreshPointsBtn = new Button(() => UpdateSnapPointVisuals());
+                refreshPointsBtn.text = "Refresh Snapping Points (Connection & Furniture)";
                 m_inspectorContainer.Add(refreshPointsBtn);
             }
         }
 
-        private void UpdateConnectionPointVisuals() {
-            if (m_currentMode != AssetMode.Buildings) return;
-
+        private void UpdateSnapPointVisuals() {
+            // Clear old helpers
             foreach (var helper in m_connectionPointHelpers)
                 if (helper != null) DestroyImmediate(helper);
-
             m_connectionPointHelpers.Clear();
+
+            foreach (var helper in m_furniturePointHelpers)
+                if (helper != null) DestroyImmediate(helper);
+            m_furniturePointHelpers.Clear();
 
             if (m_instance == null || m_selectedBuilding == null) return;
 
+            // Draw connection points (orange)
             for (int i = 0; i < m_selectedBuilding.connectionPointsLocal.Length; i++) {
                 Vector3 localPos = m_selectedBuilding.connectionPointsLocal[i];
-                GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                sphere.name = $"ConnectionPoint_{i}";
-                sphere.transform.SetParent(m_instance.transform);
-                sphere.transform.localPosition = localPos;
-                sphere.transform.localScale = Vector3.one * 0.1f;
-
-                var renderer = sphere.GetComponent<Renderer>();
-                renderer.sharedMaterial = new Material(Shader.Find("Standard"));
-                renderer.sharedMaterial.color = new Color(1f, 0.5f, 0f, 0.7f);
-
-                DestroyImmediate(sphere.GetComponent<Collider>());
+                GameObject sphere = CreatePointHelper(localPos, new Color(1f, 0.5f, 0f, 0.7f), "ConnectionPoint");
                 m_connectionPointHelpers.Add(sphere);
             }
 
+            // Draw furniture snap points (green)
+            for (int i = 0; i < m_selectedBuilding.furnitureSnapPointsLocal.Length; i++) {
+                Vector3 localPos = m_selectedBuilding.furnitureSnapPointsLocal[i];
+                GameObject sphere = CreatePointHelper(localPos, new Color(0f, 1f, 0f, 0.7f), "FurniturePoint");
+                m_furniturePointHelpers.Add(sphere);
+            }
+
             UpdateCamera();
+        }
+
+        private GameObject CreatePointHelper(Vector3 localPos, Color color, string namePrefix) {
+            GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            sphere.name = $"{namePrefix}_{m_connectionPointHelpers.Count + m_furniturePointHelpers.Count}";
+            sphere.transform.SetParent(m_instance.transform);
+            sphere.transform.localPosition = localPos;
+            sphere.transform.localScale = Vector3.one * 0.1f;
+            var renderer = sphere.GetComponent<Renderer>();
+            renderer.sharedMaterial = new Material(Shader.Find("Standard"));
+            renderer.sharedMaterial.color = color;
+            DestroyImmediate(sphere.GetComponent<Collider>());
+            return sphere;
         }
 
         private void SaveAssetChanges() {
@@ -329,14 +345,23 @@ namespace Game.Editor {
                 return;
             }
 
-            // Hide connection point helpers if any
-            bool[] wasActive = null;
-            if (m_currentMode == AssetMode.Buildings && m_connectionPointHelpers.Count > 0) {
-                wasActive = new bool[m_connectionPointHelpers.Count];
+            // Hide both connection and furniture helpers before capture
+            bool[] connActive = null, furnActive = null;
+            if (m_connectionPointHelpers.Count > 0) {
+                connActive = new bool[m_connectionPointHelpers.Count];
                 for (int i = 0; i < m_connectionPointHelpers.Count; i++) {
                     if (m_connectionPointHelpers[i] != null) {
-                        wasActive[i] = m_connectionPointHelpers[i].activeSelf;
+                        connActive[i] = m_connectionPointHelpers[i].activeSelf;
                         m_connectionPointHelpers[i].SetActive(false);
+                    }
+                }
+            }
+            if (m_furniturePointHelpers.Count > 0) {
+                furnActive = new bool[m_furniturePointHelpers.Count];
+                for (int i = 0; i < m_furniturePointHelpers.Count; i++) {
+                    if (m_furniturePointHelpers[i] != null) {
+                        furnActive[i] = m_furniturePointHelpers[i].activeSelf;
+                        m_furniturePointHelpers[i].SetActive(false);
                     }
                 }
             }
@@ -357,10 +382,14 @@ namespace Game.Editor {
 
             m_sceneCamera.backgroundColor = originalBackground;
 
-            if (m_currentMode == AssetMode.Buildings && wasActive != null) {
+            // Restore helper visibility
+            if (connActive != null) {
                 for (int i = 0; i < m_connectionPointHelpers.Count; i++)
-                    if (m_connectionPointHelpers[i] != null)
-                        m_connectionPointHelpers[i].SetActive(wasActive[i]);
+                    if (m_connectionPointHelpers[i] != null) m_connectionPointHelpers[i].SetActive(connActive[i]);
+            }
+            if (furnActive != null) {
+                for (int i = 0; i < m_furniturePointHelpers.Count; i++)
+                    if (m_furniturePointHelpers[i] != null) m_furniturePointHelpers[i].SetActive(furnActive[i]);
             }
 
             string outputFolder = (m_currentMode == AssetMode.Buildings) ? m_iconOutputFolderBuildings : m_iconOutputFolderItems;
@@ -463,6 +492,8 @@ namespace Game.Editor {
                 DestroyImmediate(m_previewTexture);
 
             foreach (var helper in m_connectionPointHelpers)
+                if (helper != null) DestroyImmediate(helper);
+            foreach (var helper in m_furniturePointHelpers)
                 if (helper != null) DestroyImmediate(helper);
         }
     }

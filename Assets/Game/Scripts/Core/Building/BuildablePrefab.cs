@@ -17,6 +17,10 @@ namespace Game.Scripts.Core.Building {
         public Vector3[] connectionPointsLocal = Array.Empty<Vector3>();
         public List<BuildRequirement> requirements = new List<BuildRequirement>();
 
+        public bool isFurniture;
+        public bool isFurnitureMount;
+        public Vector3[] furnitureSnapPointsLocal = Array.Empty<Vector3>();
+
         [HideInInspector] public Bounds bounds;
         public Vector3 BoundsSize => bounds.size;
         public Vector3 BoundsCenter => bounds.center;

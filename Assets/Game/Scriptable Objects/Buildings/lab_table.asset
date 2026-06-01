@@ -10,18 +10,22 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0b121d26c28f4e9e80912b5db5dfa46c, type: 3}
-  m_Name: growbed
+  m_Name: lab_table
   m_EditorClassIdentifier: Assembly-CSharp::Game.Scripts.Core.Building.BuildablePrefab
-  id: growbed
-  displayName: Growbed
+  id: lab_table
+  displayName: Lab Table
   prefabVariants:
-  - {fileID: 714993872254263325, guid: b5b480786213d364b86b0d7da7ac2325, type: 3}
-  category: 4
-  icon: {fileID: 0}
+  - {fileID: 748088812466086192, guid: 25fcffc664b11534dbcd09f7b23e2e5d, type: 3}
+  category: 2
+  icon: {fileID: 21300000, guid: 4c6b1b5ca2889dd4f94d3b9892deff2c, type: 3}
   placementOffset: {x: 0, y: 0, z: 0}
   placementRotation: {x: 0, y: 0, z: 0}
   connectionPointsLocal: []
   requirements: []
+  isFurniture: 0
+  isFurnitureMount: 0
+  furnitureSnapPointsLocal:
+  - {x: 0, y: 0, z: 0}
   bounds:
     m_Center: {x: 0, y: 0, z: 0}
     m_Extent: {x: 0, y: 0, z: 0}

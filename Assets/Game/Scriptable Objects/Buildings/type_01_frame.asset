@@ -28,7 +28,23 @@ MonoBehaviour:
   - requiredItem: {fileID: 11400000, guid: dedd45268cc0e844480c54b207b3a9f7, type: 2}
     quantity: 10
   - requiredItem: {fileID: 11400000, guid: 708e43441d2fe4541a2b88f5f225d67f, type: 2}
-    quantity: 1
+    quantity: 2
+  isFurniture: 0
+  isFurnitureMount: 1
+  furnitureSnapPointsLocal:
+  - {x: -3.5, y: 0, z: 0}
+  - {x: 3.5, y: 0, z: 0}
+  - {x: 0, y: 0, z: -3.5}
+  - {x: 0, y: 0, z: 3.5}
+  - {x: -3.1, y: 0, z: -1.8}
+  - {x: -3.1, y: 0, z: 1.8}
+  - {x: -1.8, y: 0, z: -3.1}
+  - {x: -1.8, y: 0, z: 3.1}
+  - {x: 3.1, y: 0, z: -1.8}
+  - {x: 3.1, y: 0, z: 1.8}
+  - {x: 1.8, y: 0, z: -3.1}
+  - {x: 1.8, y: 0, z: 3.1}
+  - {x: 0, y: 0, z: 0}
   bounds:
     m_Center: {x: 0, y: 0, z: 0}
     m_Extent: {x: 0, y: 0, z: 0}

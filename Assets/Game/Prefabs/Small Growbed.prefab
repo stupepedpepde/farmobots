@@ -14,8 +14,9 @@ GameObject:
   - component: {fileID: 853655212791164742}
   - component: {fileID: 8708977458596886873}
   - component: {fileID: 2845970923314034995}
+  - component: {fileID: 1482302632145496912}
   m_Layer: 7
-  m_Name: Growbed
+  m_Name: Small Growbed
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -163,54 +164,54 @@ MonoBehaviour:
   - m_Vertices: 0b0000000e00000012000000
   m_SharedTextures: []
   m_Positions:
-  - {x: -2, y: -0.25, z: 3}
-  - {x: 2, y: -0.25, z: 3}
-  - {x: -2, y: 0.25, z: 3}
-  - {x: 2, y: 0.25, z: 3}
-  - {x: 2, y: -0.25, z: 3}
-  - {x: 2, y: -0.25, z: -3}
-  - {x: 2, y: 0.25, z: 3}
-  - {x: 2, y: 0.25, z: -3}
-  - {x: 2, y: -0.25, z: -3}
-  - {x: -2, y: -0.25, z: -3}
-  - {x: 2, y: 0.25, z: -3}
-  - {x: -2, y: 0.25, z: -3}
-  - {x: -2, y: -0.25, z: -3}
-  - {x: -2, y: -0.25, z: 3}
-  - {x: -2, y: 0.25, z: -3}
-  - {x: -2, y: 0.25, z: 3}
-  - {x: -2, y: 0.25, z: 3}
-  - {x: 2, y: 0.25, z: 3}
-  - {x: -2, y: 0.25, z: -3}
-  - {x: 2, y: 0.25, z: -3}
-  - {x: -2, y: -0.25, z: -3}
-  - {x: 2, y: -0.25, z: -3}
-  - {x: -2, y: -0.25, z: 3}
-  - {x: 2, y: -0.25, z: 3}
+  - {x: -0.5, y: -0.1, z: 1}
+  - {x: 0.5, y: -0.1, z: 1}
+  - {x: -0.5, y: 0.1, z: 1}
+  - {x: 0.5, y: 0.1, z: 1}
+  - {x: 0.5, y: -0.1, z: 1}
+  - {x: 0.5, y: -0.1, z: -1}
+  - {x: 0.5, y: 0.1, z: 1}
+  - {x: 0.5, y: 0.1, z: -1}
+  - {x: 0.5, y: -0.1, z: -1}
+  - {x: -0.5, y: -0.1, z: -1}
+  - {x: 0.5, y: 0.1, z: -1}
+  - {x: -0.5, y: 0.1, z: -1}
+  - {x: -0.5, y: -0.1, z: -1}
+  - {x: -0.5, y: -0.1, z: 1}
+  - {x: -0.5, y: 0.1, z: -1}
+  - {x: -0.5, y: 0.1, z: 1}
+  - {x: -0.5, y: 0.1, z: 1}
+  - {x: 0.5, y: 0.1, z: 1}
+  - {x: -0.5, y: 0.1, z: -1}
+  - {x: 0.5, y: 0.1, z: -1}
+  - {x: -0.5, y: -0.1, z: -1}
+  - {x: 0.5, y: -0.1, z: -1}
+  - {x: -0.5, y: -0.1, z: 1}
+  - {x: 0.5, y: -0.1, z: 1}
   m_Textures0:
-  - {x: 4, y: 0.5}
-  - {x: 0, y: 0.5}
-  - {x: 4, y: 1}
+  - {x: 1, y: 0.79999995}
+  - {x: 0, y: 0.79999995}
+  - {x: 1, y: 1}
   - {x: 0, y: 1}
-  - {x: 6, y: 0.5}
-  - {x: 0, y: 0.5}
-  - {x: 6, y: 1}
+  - {x: 2, y: 0.79999995}
+  - {x: 0, y: 0.79999995}
+  - {x: 2, y: 1}
   - {x: 0, y: 1}
-  - {x: 4, y: 0.5}
-  - {x: 0, y: 0.5}
-  - {x: 4, y: 1}
+  - {x: 1, y: 0.79999995}
+  - {x: 0, y: 0.79999995}
+  - {x: 1, y: 1}
   - {x: 0, y: 1}
-  - {x: 6, y: 0.5}
-  - {x: 0, y: 0.5}
-  - {x: 6, y: 1}
+  - {x: 2, y: 0.79999995}
+  - {x: 0, y: 0.79999995}
+  - {x: 2, y: 1}
   - {x: 0, y: 1}
   - {x: 0, y: 1}
-  - {x: 4, y: 1}
-  - {x: 0, y: -5}
-  - {x: 4, y: -5}
-  - {x: 4, y: -5}
-  - {x: 0, y: -5}
-  - {x: 4, y: 1}
+  - {x: 1, y: 1}
+  - {x: 0, y: -1}
+  - {x: 1, y: -1}
+  - {x: 1, y: -1}
+  - {x: 0, y: -1}
+  - {x: 1, y: 1}
   - {x: 0, y: 1}
   m_Textures2: []
   m_Textures3: []
@@ -248,7 +249,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 0}
-  m_VersionIndex: 114
+  m_VersionIndex: 180
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
@@ -268,8 +269,8 @@ MonoBehaviour:
   m_Shape:
     rid: 5213677783498883073
   m_ShapeRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_UnmodifiedMeshVersion: 114
-  m_Size: {x: 4, y: 0.5, z: 6}
+  m_UnmodifiedMeshVersion: 180
+  m_Size: {x: 1, y: 0.2, z: 2}
   m_LocalCenter: {x: 0, y: 0, z: 0}
   references:
     version: 2
@@ -359,7 +360,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3818b9dff65bea04f9e24b1dfc1c7c1b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Game.Scripts.Planting.Plantable
-  gridSize: {x: 4, y: 6}
+  gridSize: {x: 1, y: 2}
   cellSize: 1
-  spotHeight: 0.5
+  spotHeight: 0.2
   Spot: {fileID: 2695269186868993872, guid: c0dc2440f9ddc8c419da75b52c02b3f9, type: 3}
+--- !u!33 &1482302632145496912
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 714993872254263325}
+  m_Mesh: {fileID: 0}

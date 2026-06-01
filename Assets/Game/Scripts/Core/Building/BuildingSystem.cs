@@ -20,6 +20,7 @@ namespace Game.Scripts.Core.Building {
         public GameObject obj;
         public BuildablePrefab prefab;
         public Vector3[] worldConnectionPoints;
+        public Vector3[] worldFurniturePoints;   // world positions of furniture snap points
         public Quaternion rotation;
         public Vector3 position;
         public int variantIndex;
@@ -31,6 +32,7 @@ namespace Game.Scripts.Core.Building {
             this.position = position;
             this.variantIndex = variantIndex;
             UpdateWorldConnectionPoints();
+            UpdateWorldFurniturePoints();
         }
 
         public void UpdateWorldConnectionPoints() {
@@ -42,6 +44,16 @@ namespace Game.Scripts.Core.Building {
             worldConnectionPoints = new Vector3[prefab.connectionPointsLocal.Length];
             for (int i = 0; i < prefab.connectionPointsLocal.Length; i++)
                 worldConnectionPoints[i] = position + rotation * prefab.connectionPointsLocal[i];
+        }
+
+        public void UpdateWorldFurniturePoints() {
+            if (prefab.isFurnitureMount && prefab.furnitureSnapPointsLocal.Length > 0) {
+                worldFurniturePoints = new Vector3[prefab.furnitureSnapPointsLocal.Length];
+                for (int i = 0; i < prefab.furnitureSnapPointsLocal.Length; i++)
+                    worldFurniturePoints[i] = position + rotation * prefab.furnitureSnapPointsLocal[i];
+            } else {
+                worldFurniturePoints = Array.Empty<Vector3>();
+            }
         }
     }
 
@@ -144,7 +156,6 @@ namespace Game.Scripts.Core.Building {
         }
 
         #region Rotation
-
         public void RotateGhost() {
             if (!_buildMode || CurrentPrefab == null) return;
             _currentRotationIndex = (_currentRotationIndex + 1) % 12;
@@ -157,11 +168,9 @@ namespace Game.Scripts.Core.Building {
             UpdateGhostPosition();
             OnPrefabChanged?.Invoke(_currentPrefabIndex);
         }
-
         #endregion
 
         #region Building Operations
-
         private void HandleBuildingRequest() {
             if (!_buildMode || _ghostObject == null || !_ghostObject.activeSelf || CurrentPrefab == null)
                 return;
@@ -216,33 +225,40 @@ namespace Game.Scripts.Core.Building {
             var data = new PlacedObjectData(newObj, buildable, rotation, position, _currentVariantIndex);
             _placedObjectData.Add(data);
 
-            if (raiseTerrain)
+            // Only flatten terrain for non‑furniture objects
+            if (raiseTerrain && !buildable.isFurniture)
                 TerrainManager.instance?.FlattenAroundBuilding(newObj, 0.01f);
 
             OnObjectPlaced?.Invoke(newObj, position, rotation);
         }
-
         #endregion
 
         #region Validation & Snapping
-
         private Vector3 GetSnappedPosition(Vector3 worldPos) {
             if (CurrentPrefab == null) return worldPos;
-            Vector3 placementOffset = CurrentPrefab.placementOffset;
-            Vector3 basePos = worldPos + placementOffset;
+            Vector3 basePos = worldPos + CurrentPrefab.placementOffset;
 
-            if (TrySnapToConnectionPoints(basePos, out Vector3 snappedPos))
-                return snappedPos;
+            // Furniture: only snap to mount points, no grid or structural snapping
+            if (CurrentPrefab.isFurniture) {
+                if (TrySnapToFurniturePoints(basePos, out Vector3 snapped))
+                    return snapped;
+                return basePos;   // if no snap point found, will be invalid later
+            }
 
-            if (gridIndex < 0 || gridIndex >= gridSizes.Length) return basePos;
+            // Non‑furniture: original logic (connection points first, then grid)
+            if (TrySnapToConnectionPoints(basePos, out Vector3 connSnapped))
+                return connSnapped;
+
             float size = gridSizes[gridIndex];
-            if (size <= 0) return basePos;
+            if (size > 0) {
+                return new Vector3(
+                    Mathf.Round(basePos.x / size) * size,
+                    Mathf.Round(basePos.y / size) * size,
+                    Mathf.Round(basePos.z / size) * size
+                );
+            }
 
-            return new Vector3(
-                Mathf.Round(basePos.x / size) * size,
-                Mathf.Round(basePos.y / size) * size,
-                Mathf.Round(basePos.z / size) * size
-            );
+            return basePos;
         }
 
         private bool TrySnapToConnectionPoints(Vector3 desiredPos, out Vector3 resultPos) {
@@ -285,8 +301,67 @@ namespace Game.Scripts.Core.Building {
             return false;
         }
 
+        private bool TrySnapToFurniturePoints(Vector3 desiredPos, out Vector3 resultPos) {
+            resultPos = desiredPos;
+            _snappedToObject = null;
+
+            if (CurrentPrefab == null || !CurrentPrefab.isFurniture)
+                return false;
+
+            // Get ghost's furniture snap points
+            Vector3[] ghostPoints = GetGhostFurniturePoints(desiredPos);
+            if (ghostPoints.Length == 0) return false;
+
+            float bestDistance = float.MaxValue;
+            Vector3 bestOffset = Vector3.zero;
+            GameObject bestTarget = null;
+
+            foreach (var placed in _placedObjectData) {
+                if (placed.obj == null || !placed.prefab.isFurnitureMount) continue;
+                if (placed.worldFurniturePoints.Length == 0) continue;
+
+                foreach (var targetPoint in placed.worldFurniturePoints) {
+                    for (int i = 0; i < ghostPoints.Length; i++) {
+                        float dist = Vector3.Distance(ghostPoints[i], targetPoint);
+                        if (dist < bestDistance && dist < connectionSnapDistance) {
+                            bestDistance = dist;
+                            bestOffset = targetPoint - ghostPoints[i];
+                            bestTarget = placed.obj;
+                        }
+                    }
+                }
+            }
+
+            if (bestDistance < float.MaxValue) {
+                resultPos = desiredPos + bestOffset;
+                _snappedToObject = bestTarget;
+                return true;
+            }
+
+            return false;
+        }
+
+        private Vector3[] GetGhostFurniturePoints(Vector3 ghostPos) {
+            if (CurrentPrefab.furnitureSnapPointsLocal == null)
+                return Array.Empty<Vector3>();
+
+            Quaternion rot = Quaternion.Euler(_currentRotation);
+            Vector3[] points = new Vector3[CurrentPrefab.furnitureSnapPointsLocal.Length];
+            for (int i = 0; i < points.Length; i++)
+                points[i] = ghostPos + rot * CurrentPrefab.furnitureSnapPointsLocal[i];
+
+            return points;
+        }
+
         private bool IsValidBuildPosition(Vector3 pos) {
             if (CurrentPrefab == null) return false;
+
+            // Furniture: must be snapped to a mount point
+            if (CurrentPrefab.isFurniture) {
+                return _snappedToObject != null;
+            }
+
+            // Non‑furniture: original collision & terrain validation
             GameObject currentVariant = GetCurrentVariant();
             if (currentVariant == null) return false;
 
@@ -311,11 +386,9 @@ namespace Game.Scripts.Core.Building {
 
             return true;
         }
-
         #endregion
 
         #region Prefab Management
-
         private void CalculateAllPrefabBounds() {
             foreach (var data in buildablePrefabs) {
                 if (data.prefabVariants == null) continue;
@@ -424,11 +497,9 @@ namespace Game.Scripts.Core.Building {
                 return null;
             return CurrentPrefab.prefabVariants[_currentVariantIndex];
         }
-
         #endregion
 
         #region Ghost Object
-
         private void CreateGhostObject() {
             GameObject currentVariant = GetCurrentVariant();
             if (currentVariant == null) return;
@@ -497,7 +568,7 @@ namespace Game.Scripts.Core.Building {
             if (rayHit)
                 _placable = valid;
             else
-                _placable = valid && (_snappedToObject != null); // still require ground if not snapped
+                _placable = valid && (_snappedToObject != null);
 
             _ghostObject.transform.position = snapped;
             _ghostObject.transform.rotation = Quaternion.Euler(_currentRotation);
@@ -518,9 +589,7 @@ namespace Game.Scripts.Core.Building {
             Color color = valid ? ghostValidColor : ghostInvalidColor;
             foreach (var r in _ghostRenderers) {
                 if (r.material != null) {
-                    // URP Unlit uses _BaseColor
                     r.material.SetColor("_BaseColor", color);
-                    // Fallback for non-URP shaders
                     if (!r.material.HasProperty("_BaseColor"))
                         r.material.SetColor("_Color", color);
                 }
@@ -539,11 +608,9 @@ namespace Game.Scripts.Core.Building {
             foreach (var col in colliders)
                 Destroy(col);
         }
-
         #endregion
 
         #region Public API
-
         public void SetBuildMode(bool active) {
             if (_buildMode == active) return;
             _buildMode = active;
@@ -559,7 +626,6 @@ namespace Game.Scripts.Core.Building {
         }
 
         public bool GetBuildMode() => _buildMode;
-
         #endregion
     }
 }

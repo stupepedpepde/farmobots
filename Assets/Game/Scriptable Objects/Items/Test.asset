@@ -15,7 +15,7 @@ MonoBehaviour:
   itemName: Test
   icon: {fileID: 21300000, guid: 042cc2e513389414b9abeb8eb592e388, type: 3}
   maxStack: 20
-  description: version 1
+  description: version
   isSeed: 1
   previewPrefab: {fileID: 100000, guid: b4faa2141c16dce4ca0958f3035745cd, type: 3}
-  plantsToGrow: {fileID: 11400000, guid: 0bc9ec0affcec0340967e17319e716dc, type: 2}
+  plantsToGrow: {fileID: 11400000, guid: 50560a99ca92d13478e9ed3a23a89e5c, type: 2}

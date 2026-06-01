@@ -12,7 +12,7 @@ namespace Game.Scripts.Core.Environment {
         [SerializeField] private Vector2 oxygenStartRange = new Vector2(1f, 5f);   // 1-5% O₂ – extreme
 
         [Header("Carbon Dioxide Settings")]
-        [SerializeField] private Vector2 carbonStartRange = new Vector2(5f, 15f);   // 5-15% CO₂ – high
+        [SerializeField] private Vector2 carbonStartRange = new Vector2(5f, 10f);   // 5-15% CO₂ – high
 
         [Header("Nitrogen Settings")]
         [SerializeField] private Vector2 nitrogenStartRange = new Vector2(50f, 70f); // 50-70% N₂ – low

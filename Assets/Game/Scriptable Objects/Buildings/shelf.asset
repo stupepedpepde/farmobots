@@ -26,6 +26,10 @@ MonoBehaviour:
     quantity: 2
   - requiredItem: {fileID: 11400000, guid: 708e43441d2fe4541a2b88f5f225d67f, type: 2}
     quantity: 1
+  isFurniture: 1
+  isFurnitureMount: 0
+  furnitureSnapPointsLocal:
+  - {x: 0, y: 0, z: 0}
   bounds:
     m_Center: {x: 0, y: 0, z: 0}
     m_Extent: {x: 0, y: 0, z: 0}

@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37d016c84e804977a75de166b6b0932d, type: 3}
+  m_Name: Bobber Plant
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Scripts.Plants.PlantSO
+  plantName: Bobber
+  plantPrefabs:
+  - {fileID: 8004880073324451008, guid: e0c0ab4ab41221747823602709cd5a3c, type: 3}
+  - {fileID: 1125090915475188105, guid: f55f37e899286724c847cbe8ce22fbff, type: 3}
+  - {fileID: 3112954148815543370, guid: 0d059dfd241b7474b8506332d70124b0, type: 3}
+  growthTime: 5
+  oxygenMin: 4
+  oxygenMax: 10
+  carbonMin: 5
+  carbonMax: 9
+  nitrogenMin: 30
+  nitrogenMax: 70
+  oxygenProduction: 0.03
+  carbonConsumption: 0.02
+  plantingTime: 8
+  harvestTime: 4
+  requiresWatering: 0
+  maxWater: 200
+  waterDrainRate: 1.5
+  plantSize: 1
+  footprintOffset: {x: 0, y: 0}
+  harvestDrops: []

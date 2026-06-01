@@ -10,27 +10,22 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0b121d26c28f4e9e80912b5db5dfa46c, type: 3}
-  m_Name: type_01_wall
+  m_Name: small_growbed
   m_EditorClassIdentifier: Assembly-CSharp::Game.Scripts.Core.Building.BuildablePrefab
-  id: type_01_wall
-  displayName: Type-01 Wall
+  id: small_growbed
+  displayName: Small Growbed
   prefabVariants:
-  - {fileID: 8610960130493868220, guid: fc183ed8531d6d446bbdf5d7e997f3bc, type: 3}
-  category: 0
-  icon: {fileID: 21300000, guid: e089814b10f909441b77b2d630b4862e, type: 3}
+  - {fileID: 714993872254263325, guid: 405f52ebd9f069c4390fba3faacd9d4d, type: 3}
+  category: 4
+  icon: {fileID: 21300000, guid: 45f519e50df2f2f46b740495cdb57d95, type: 3}
   placementOffset: {x: 0, y: 0, z: 0}
   placementRotation: {x: 0, y: 0, z: 0}
-  connectionPointsLocal:
-  - {x: 0, y: 0, z: 0}
-  requirements:
-  - requiredItem: {fileID: 11400000, guid: cf61004e49163454f934c533f07ab441, type: 2}
-    quantity: 2
-  - requiredItem: {fileID: 11400000, guid: dedd45268cc0e844480c54b207b3a9f7, type: 2}
-    quantity: 2
-  isFurniture: 0
-  isFurnitureMount: 1
+  connectionPointsLocal: []
+  requirements: []
+  isFurniture: 1
+  isFurnitureMount: 0
   furnitureSnapPointsLocal:
-  - {x: -5.9, y: 0, z: -3.425}
+  - {x: 0, y: -0.1, z: 0}
   bounds:
     m_Center: {x: 0, y: 0, z: 0}
     m_Extent: {x: 0, y: 0, z: 0}

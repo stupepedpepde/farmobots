@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37d016c84e804977a75de166b6b0932d, type: 3}
+  m_Name: Acidic Shroom
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Scripts.Plants.PlantSO
+  plantName: Acidic Shroom
+  plantPrefabs:
+  - {fileID: 1076957298499489348, guid: d5466d3ae03609c40b30776479622ad3, type: 3}
+  - {fileID: 6662402449739863849, guid: b5d7b791262317c4aaffa7dcf8d8c569, type: 3}
+  growthTime: 50
+  oxygenMin: 0
+  oxygenMax: 4
+  carbonMin: 2
+  carbonMax: 5
+  nitrogenMin: 30
+  nitrogenMax: 80
+  oxygenProduction: 0.02
+  carbonConsumption: 0.01
+  plantingTime: 5
+  harvestTime: 4
+  requiresWatering: 1
+  maxWater: 200
+  waterDrainRate: 0.5
+  plantSize: 1
+  footprintOffset: {x: 0, y: 0}
+  harvestDrops: []
