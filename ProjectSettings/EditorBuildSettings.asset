@@ -21,12 +21,6 @@ EditorBuildSettings:
     path: Assets/Game/Scenes/WorldScene.unity
     guid: 856c8e62c6f3155468df94e7acdd62d7
   - enabled: 1
-    path: Assets/Game/Scenes/Menus/MainMenuScene.unity
-    guid: bfe7b8696fb65424ebfc73d24d1dc698
-  - enabled: 1
-    path: Assets/Game/Scenes/Menus/PauseMenuScene.unity
-    guid: dec7bdf58321af44db663b614804dcf6
-  - enabled: 1
     path: Assets/Game/Scenes/UI/HUDScene.unity
     guid: 58b45e25a20132d4b8f59285893535d1
   m_configObjects:

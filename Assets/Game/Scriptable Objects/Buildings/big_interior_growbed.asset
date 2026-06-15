@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: big_interior_growbed
   m_EditorClassIdentifier: Assembly-CSharp::Game.Scripts.Core.Building.BuildablePrefab
   id: big_growbed
-  displayName: Big Growbed
+  displayName: Big Interior Growbed
   prefabVariants:
   - {fileID: 714993872254263325, guid: b5b480786213d364b86b0d7da7ac2325, type: 3}
   category: 4
